@@ -90,8 +90,47 @@ const Register = () => {
   };
 
   const nextStep = () => {
-    if (currentStep === 1 && dateOfBirth) {
-      setIsUnder18(checkAge(dateOfBirth));
+    const formData = watch();
+    
+    // Validate current step before proceeding
+    let isValid = true;
+    
+    if (currentStep === 1) {
+      if (!formData.firstName || !formData.lastName || !formData.email || 
+          !formData.phone || !formData.dateOfBirth || !formData.gender || !formData.corpsName) {
+        isValid = false;
+      }
+      if (isValid && dateOfBirth) {
+        setIsUnder18(checkAge(dateOfBirth));
+      }
+    }
+    
+    if (currentStep === 2 && isUnder18) {
+      if (!formData.guardianFirstName || !formData.guardianLastName || 
+          !formData.guardianEmail || !formData.guardianPhone || !formData.guardianRelationship) {
+        isValid = false;
+      }
+    }
+    
+    if (currentStep === 3) {
+      if (!formData.emergencyName || !formData.emergencyPhone || !formData.emergencyRelationship) {
+        isValid = false;
+      }
+    }
+    
+    if (currentStep === 5) {
+      if (!formData.agreedToTerms) {
+        isValid = false;
+      }
+    }
+    
+    if (!isValid) {
+      toast({
+        title: "Please fill all required fields",
+        description: "Complete all mandatory fields before proceeding.",
+        variant: "destructive"
+      });
+      return;
     }
     
     // Skip guardian step if over 18
