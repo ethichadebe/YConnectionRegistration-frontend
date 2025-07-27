@@ -204,6 +204,11 @@ const Register = () => {
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.gender && <p className="text-destructive text-sm mt-1">Gender is required</p>}
+                  <input 
+                    type="hidden" 
+                    {...register("gender", { required: "Gender is required" })} 
+                  />
                 </div>
               </div>
 
@@ -282,6 +287,11 @@ const Register = () => {
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.guardianRelationship && <p className="text-destructive text-sm mt-1">Relationship is required</p>}
+                  <input 
+                    type="hidden" 
+                    {...register("guardianRelationship", { required: isUnder18 ? "Relationship is required" : false })} 
+                  />
                 </div>
               </div>
             </div>
