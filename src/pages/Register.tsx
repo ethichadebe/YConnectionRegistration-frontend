@@ -44,6 +44,7 @@ interface FormData {
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isUnder18, setIsUnder18] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -91,38 +92,51 @@ const Register = () => {
 
   const nextStep = () => {
     const formData = watch();
+    let isValid = true;
+    const newFieldErrors: Record<string, boolean> = {};
     
     // Validate current step before proceeding
-    let isValid = true;
-    
     if (currentStep === 1) {
-      if (!formData.firstName || !formData.lastName || !formData.email || 
-          !formData.phone || !formData.dateOfBirth || !formData.gender || !formData.corpsName) {
-        isValid = false;
-      }
+      const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
+      requiredFields.forEach(field => {
+        if (!formData[field as keyof FormData]) {
+          newFieldErrors[field] = true;
+          isValid = false;
+        }
+      });
       if (isValid && dateOfBirth) {
         setIsUnder18(checkAge(dateOfBirth));
       }
     }
     
     if (currentStep === 2 && isUnder18) {
-      if (!formData.guardianFirstName || !formData.guardianLastName || 
-          !formData.guardianEmail || !formData.guardianPhone || !formData.guardianRelationship) {
-        isValid = false;
-      }
+      const requiredFields = ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'];
+      requiredFields.forEach(field => {
+        if (!formData[field as keyof FormData]) {
+          newFieldErrors[field] = true;
+          isValid = false;
+        }
+      });
     }
     
     if (currentStep === 3) {
-      if (!formData.emergencyName || !formData.emergencyPhone || !formData.emergencyRelationship) {
-        isValid = false;
-      }
+      const requiredFields = ['emergencyName', 'emergencyPhone', 'emergencyRelationship'];
+      requiredFields.forEach(field => {
+        if (!formData[field as keyof FormData]) {
+          newFieldErrors[field] = true;
+          isValid = false;
+        }
+      });
     }
     
     if (currentStep === 5) {
       if (!formData.agreedToTerms) {
+        newFieldErrors.agreedToTerms = true;
         isValid = false;
       }
     }
+    
+    setFieldErrors(newFieldErrors);
     
     if (!isValid) {
       toast({
@@ -132,6 +146,9 @@ const Register = () => {
       });
       return;
     }
+    
+    // Clear errors if validation passes
+    setFieldErrors({});
     
     // Skip guardian step if over 18
     if (currentStep === 1 && !checkAge(dateOfBirth)) {
@@ -177,7 +194,7 @@ const Register = () => {
                   <Label htmlFor="firstName">First Name *</Label>
                   <Input 
                     id="firstName"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.firstName ? 'error' : ''}`}
                     {...register("firstName", { required: "First name is required" })}
                   />
                   {errors.firstName && <p className="text-destructive text-sm mt-1">{errors.firstName.message}</p>}
@@ -187,7 +204,7 @@ const Register = () => {
                   <Label htmlFor="lastName">Last Name *</Label>
                   <Input 
                     id="lastName"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.lastName ? 'error' : ''}`}
                     {...register("lastName", { required: "Last name is required" })}
                   />
                   {errors.lastName && <p className="text-destructive text-sm mt-1">{errors.lastName.message}</p>}
@@ -199,7 +216,7 @@ const Register = () => {
                 <Input 
                   id="email"
                   type="email"
-                  className="form-input"
+                  className={`form-input ${fieldErrors.email ? 'error' : ''}`}
                   {...register("email", { 
                     required: "Email is required",
                     pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" }
@@ -213,7 +230,7 @@ const Register = () => {
                 <Input 
                   id="phone"
                   type="tel"
-                  className="form-input"
+                  className={`form-input ${fieldErrors.phone ? 'error' : ''}`}
                   {...register("phone", { required: "Phone number is required" })}
                 />
                 {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>}
@@ -225,7 +242,7 @@ const Register = () => {
                   <Input 
                     id="dateOfBirth"
                     type="date"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.dateOfBirth ? 'error' : ''}`}
                     {...register("dateOfBirth", { required: "Date of birth is required" })}
                   />
                   {errors.dateOfBirth && <p className="text-destructive text-sm mt-1">{errors.dateOfBirth.message}</p>}
@@ -234,7 +251,7 @@ const Register = () => {
                 <div>
                   <Label htmlFor="gender">Gender *</Label>
                   <Select onValueChange={(value) => setValue("gender", value)}>
-                    <SelectTrigger className="form-input">
+                    <SelectTrigger className={`form-input ${fieldErrors.gender ? 'error' : ''}`}>
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
@@ -255,7 +272,7 @@ const Register = () => {
                 <Label htmlFor="corpsName">Corps/Church Name *</Label>
                 <Input 
                   id="corpsName"
-                  className="form-input"
+                  className={`form-input ${fieldErrors.corpsName ? 'error' : ''}`}
                   {...register("corpsName", { required: "Corps name is required" })}
                 />
                 {errors.corpsName && <p className="text-destructive text-sm mt-1">{errors.corpsName.message}</p>}
@@ -274,7 +291,7 @@ const Register = () => {
                   <Label htmlFor="guardianFirstName">Guardian First Name *</Label>
                   <Input 
                     id="guardianFirstName"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.guardianFirstName ? 'error' : ''}`}
                     {...register("guardianFirstName", { required: isUnder18 ? "Guardian first name is required" : false })}
                   />
                 </div>
@@ -283,7 +300,7 @@ const Register = () => {
                   <Label htmlFor="guardianLastName">Guardian Last Name *</Label>
                   <Input 
                     id="guardianLastName"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.guardianLastName ? 'error' : ''}`}
                     {...register("guardianLastName", { required: isUnder18 ? "Guardian last name is required" : false })}
                   />
                 </div>
@@ -294,7 +311,7 @@ const Register = () => {
                 <Input 
                   id="guardianEmail"
                   type="email"
-                  className="form-input"
+                  className={`form-input ${fieldErrors.guardianEmail ? 'error' : ''}`}
                   {...register("guardianEmail", { 
                     required: isUnder18 ? "Guardian email is required" : false,
                     pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" }
@@ -308,7 +325,7 @@ const Register = () => {
                   <Input 
                     id="guardianPhone"
                     type="tel"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.guardianPhone ? 'error' : ''}`}
                     {...register("guardianPhone", { required: isUnder18 ? "Guardian phone is required" : false })}
                   />
                 </div>
@@ -316,7 +333,7 @@ const Register = () => {
                 <div>
                   <Label htmlFor="guardianRelationship">Relationship *</Label>
                   <Select onValueChange={(value) => setValue("guardianRelationship", value)}>
-                    <SelectTrigger className="form-input">
+                    <SelectTrigger className={`form-input ${fieldErrors.guardianRelationship ? 'error' : ''}`}>
                       <SelectValue placeholder="Select relationship" />
                     </SelectTrigger>
                     <SelectContent>
@@ -345,7 +362,7 @@ const Register = () => {
                 <Label htmlFor="emergencyName">Emergency Contact Name *</Label>
                 <Input 
                   id="emergencyName"
-                  className="form-input"
+                  className={`form-input ${fieldErrors.emergencyName ? 'error' : ''}`}
                   {...register("emergencyName", { required: "Emergency contact name is required" })}
                 />
               </div>
@@ -356,7 +373,7 @@ const Register = () => {
                   <Input 
                     id="emergencyPhone"
                     type="tel"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.emergencyPhone ? 'error' : ''}`}
                     {...register("emergencyPhone", { required: "Emergency phone is required" })}
                   />
                 </div>
@@ -365,7 +382,7 @@ const Register = () => {
                   <Label htmlFor="emergencyRelationship">Relationship *</Label>
                   <Input 
                     id="emergencyRelationship"
-                    className="form-input"
+                    className={`form-input ${fieldErrors.emergencyRelationship ? 'error' : ''}`}
                     {...register("emergencyRelationship", { required: "Emergency relationship is required" })}
                   />
                 </div>

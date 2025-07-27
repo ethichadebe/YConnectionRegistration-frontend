@@ -42,6 +42,10 @@ All colors MUST be HSL.
     --camp-gold: 45 93% 47%;
     --camp-cream: 45 15% 97%;
     
+    /* Input states */
+    --input-focus: 196 23% 49%;
+    --input-error: 359 79% 57%;
+    
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(var(--camp-red)), hsl(var(--camp-navy)));
     --gradient-card: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
@@ -169,9 +173,19 @@ All colors MUST be HSL.
   /* Form input styling */
   .form-input {
     @apply w-full px-4 py-3 rounded-lg border border-border bg-card;
-    @apply focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply focus:ring-2 focus:border-transparent;
     @apply transition-all duration-200;
     font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .form-input:focus {
+    border-color: hsl(var(--input-focus));
+    ring-color: hsl(var(--input-focus));
+  }
+  
+  .form-input.error {
+    border-color: hsl(var(--input-error));
+    ring-color: hsl(var(--input-error));
   }
   
   /* Progress indicator */
