@@ -8,33 +8,50 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 45 15% 97%;
+    --foreground: 210 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 25% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 348 83% 47%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 50% 25%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 45 15% 94%;
+    --muted-foreground: 210 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 45 93% 47%;
+    --accent-foreground: 210 25% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 45 15% 88%;
+    --input: 45 15% 88%;
+    --ring: 348 83% 47%;
+
+    /* Camp-specific design tokens */
+    --camp-red: 348 83% 47%;
+    --camp-navy: 210 50% 25%;
+    --camp-gold: 45 93% 47%;
+    --camp-cream: 45 15% 97%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--camp-red)), hsl(var(--camp-navy)));
+    --gradient-card: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    
+    /* Shadows */
+    --shadow-camp: 0 10px 30px -10px hsl(var(--camp-red) / 0.3);
+    --shadow-card: 0 4px 20px -4px hsl(var(--camp-navy) / 0.15);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --radius: 0.5rem;
 
@@ -101,5 +118,77 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Camp poster-style torn paper effect */
+  .torn-paper {
+    position: relative;
+  }
+  
+  .torn-paper::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 5px,
+      hsl(var(--background)) 5px,
+      hsl(var(--background)) 10px
+    );
+    mask: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 2px,
+      white 2px,
+      white 8px
+    );
+  }
+  
+  /* Camp badge styling */
+  .camp-badge {
+    position: relative;
+    background: var(--gradient-hero);
+    border-radius: 50%;
+    box-shadow: var(--shadow-camp);
+  }
+  
+  .camp-badge::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 2px solid hsl(var(--camp-gold));
+  }
+  
+  /* Form input styling */
+  .form-input {
+    @apply w-full px-4 py-3 rounded-lg border border-border bg-card;
+    @apply focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply transition-all duration-200;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Progress indicator */
+  .progress-step {
+    @apply w-8 h-8 rounded-full flex items-center justify-center;
+    @apply border-2 transition-all duration-300;
+  }
+  
+  .progress-step.active {
+    @apply bg-primary border-primary text-primary-foreground;
+  }
+  
+  .progress-step.completed {
+    @apply bg-accent border-accent text-accent-foreground;
+  }
+  
+  .progress-step.inactive {
+    @apply bg-muted border-border text-muted-foreground;
   }
 }

@@ -52,6 +52,12 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				camp: {
+					red: 'hsl(var(--camp-red))',
+					navy: 'hsl(var(--camp-navy))',
+					gold: 'hsl(var(--camp-gold))',
+					cream: 'hsl(var(--camp-cream))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
