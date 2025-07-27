@@ -174,7 +174,7 @@ const Register = () => {
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-camp-navy mb-2">YC2025 Registration</h1>
-          <p className="text-muted-foreground">Join us for an unforgettable summer experience!</p>
+          <p className="text-muted-foreground">Join us for an unforgettable experience!</p>
         </div>
 
         <ProgressIndicator 

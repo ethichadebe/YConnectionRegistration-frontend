@@ -38,8 +38,7 @@ export const ProgressIndicator = ({ currentStep, totalSteps, stepLabels }: Progr
       
       {/* Progress bar */}
       <div className="mt-4 w-full bg-muted rounded-full h-2">
-        <div
-          className="bg-primary h-2 rounded-full transition-all duration-500"
+        <div className="bg-accent h-2 rounded-full transition-all duration-500"
           style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
         />
       </div>
