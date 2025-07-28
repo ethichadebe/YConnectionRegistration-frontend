@@ -200,6 +200,13 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* Results Counter */}
+        <div className="mb-6">
+          <p className="text-sm text-muted-foreground">
+            Showing {filteredRegistrations.length} of {registrations.length} registrations
+          </p>
+        </div>
+
         {/* Registrations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRegistrations.map((registration) => (
@@ -252,10 +259,17 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-border">
+              <div className="mt-4 pt-4 border-t border-border flex justify-between items-center">
                 <p className="text-xs text-muted-foreground">
                   Registered: {new Date(registration.registeredAt).toLocaleDateString()}
                 </p>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => navigate(`/admin/registration/${registration.id}`)}
+                >
+                  View Details
+                </Button>
               </div>
             </div>
           ))}

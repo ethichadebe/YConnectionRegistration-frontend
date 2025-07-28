@@ -37,6 +37,9 @@ interface FormData {
   medications: string;
   allergies: string;
   
+  // Consent
+  photoVideoConsent: string;
+  
   // Agreement
   agreedToTerms: boolean;
 }
@@ -50,8 +53,8 @@ const Register = () => {
   
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormData>();
   
-  const totalSteps = 5;
-  const stepLabels = ["Personal", "Guardian", "Emergency", "Medical", "Review"];
+  const totalSteps = 6;
+  const stepLabels = ["Personal", "Guardian", "Emergency", "Medical", "Consent", "Review"];
   
   const dateOfBirth = watch("dateOfBirth");
   
@@ -130,6 +133,13 @@ const Register = () => {
     }
     
     if (currentStep === 5) {
+      if (!formData.photoVideoConsent) {
+        newFieldErrors.photoVideoConsent = true;
+        isValid = false;
+      }
+    }
+    
+    if (currentStep === 6) {
       if (!formData.agreedToTerms) {
         newFieldErrors.agreedToTerms = true;
         isValid = false;
@@ -352,7 +362,7 @@ const Register = () => {
             </div>
           )}
 
-          {/* Continue with other steps... */}
+          {/* Step 3: Emergency Contact */}
           {currentStep === 3 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-camp-navy mb-6">Emergency Contact</h2>
@@ -425,7 +435,51 @@ const Register = () => {
             </div>
           )}
 
+          {/* Step 5: Consent */}
           {currentStep === 5 && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Consent & Permissions</h2>
+              
+              <div>
+                <Label className="text-base font-medium">Do you give permission for photos/videos of you to be used for promotional purposes? *</Label>
+                <div className="mt-3 space-y-2">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="yes"
+                      {...register("photoVideoConsent", { required: "Photo/video consent is required" })}
+                      className="w-4 h-4 text-camp-red focus:ring-camp-red"
+                    />
+                    <span>Yes</span>
+                  </label>
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="no"
+                      {...register("photoVideoConsent", { required: "Photo/video consent is required" })}
+                      className="w-4 h-4 text-camp-red focus:ring-camp-red"
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
+                {fieldErrors.photoVideoConsent && <p className="text-destructive text-sm mt-1">Please select an option</p>}
+              </div>
+
+              <div className="flex items-start space-x-2">
+                <Checkbox 
+                  id="infoConfirm"
+                  {...register("agreedToTerms", { required: "You must confirm the information and agree to camp rules" })}
+                />
+                <Label htmlFor="infoConfirm" className="text-sm leading-relaxed">
+                  I confirm that the above information is true and I agree to abide by the camp rules and guidelines *
+                </Label>
+              </div>
+              {fieldErrors.agreedToTerms && <p className="text-destructive text-sm">You must confirm this to proceed</p>}
+            </div>
+          )}
+
+          {/* Step 6: Review & Submit */}
+          {currentStep === 6 && (
             <div className="space-y-6">
               <h2 className="text-2xl font-semibold text-camp-navy mb-6">Review & Submit</h2>
               
@@ -436,16 +490,11 @@ const Register = () => {
                 </p>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="terms"
-                  {...register("agreedToTerms", { required: "You must agree to the terms" })}
-                />
-                <Label htmlFor="terms" className="text-sm">
-                  I agree to the terms and conditions and give permission for my child (if under 18) to participate in YC2025 *
-                </Label>
+              <div className="bg-muted rounded-lg p-4">
+                <p className="text-sm text-muted-foreground">
+                  By submitting this form, you confirm that all information provided is accurate and complete.
+                </p>
               </div>
-              {errors.agreedToTerms && <p className="text-destructive text-sm">{errors.agreedToTerms.message}</p>}
             </div>
           )}
 
