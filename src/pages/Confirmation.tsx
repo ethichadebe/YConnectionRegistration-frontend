@@ -30,11 +30,7 @@ const Confirmation = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-camp-red">•</span>
-                <span>Payment instructions will be included in the email</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-camp-red">•</span>
-                <span>Camp information packet will be sent 4 weeks before camp</span>
+                <span>Payment Are to be paid to the Corps youth leader.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-camp-red">•</span>
