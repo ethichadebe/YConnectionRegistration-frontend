@@ -16,7 +16,7 @@ const AdminLogin = () => {
     e.preventDefault();
     
     // Hardcoded credentials
-    if (username === "admin" && password === "yc2025admin") {
+    if (username === "admin" && password === "@yc2025Puppy") {
       localStorage.setItem("isAdminLoggedIn", "true");
       toast({
         title: "Login Successful",
@@ -80,14 +80,6 @@ const AdminLogin = () => {
               <ArrowLeft className="w-4 h-4" />
               Back to Home
             </Button>
-          </div>
-
-          <div className="mt-6 p-4 bg-muted rounded-lg">
-            <p className="text-xs text-muted-foreground text-center">
-              Demo Credentials:<br />
-              Username: admin<br />
-              Password: yc2025admin
-            </p>
           </div>
         </div>
       </div>
