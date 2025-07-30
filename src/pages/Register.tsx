@@ -10,6 +10,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
+
+
 interface FormData {
   // Personal Info
   firstName: string;
@@ -47,6 +49,7 @@ interface FormData {
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isUnder18, setIsUnder18] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -72,32 +75,44 @@ const Register = () => {
     return age < 18;
   };
 
-  const onSubmit = (data: FormData) => {
-    // Save to localStorage (in real app, this would be an API call)
-    const registrations = JSON.parse(localStorage.getItem("registrations") || "[]");
-    const newRegistration = {
-      id: Date.now().toString(),
-      ...data,
-      registeredAt: new Date().toISOString(),
-      isUnder18
-    };
-    
-    registrations.push(newRegistration);
-    localStorage.setItem("registrations", JSON.stringify(registrations));
-    
-    toast({
-      title: "Registration Successful!",
-      description: "Welcome to YC2025! Check your email for confirmation.",
-    });
-    
-    navigate("/confirmation");
+  // SUBMIT HANDLER
+  const onSubmit = async (data: FormData) => {
+    if (currentStep !== totalSteps) return;
+  
+    data.medicalConditions = data.medicalConditions?.trim() || "None";
+    data.medications = data.medications?.trim() || "None";
+    data.allergies = data.allergies?.trim() || "None";
+  
+    setIsSubmitting(true); // start loading
+  
+    try {
+      const response = await fetch("https://yconnectionregistration-backend.onrender.com/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to register");
+      }
+  
+      toast({ title: "Registration Successful!" });
+      navigate("/confirmation");
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Something went wrong.", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false); // end loading
+    }
   };
-
+      
   const nextStep = () => {
     const formData = watch();
     let isValid = true;
     const newFieldErrors: Record<string, boolean> = {};
-    
+  
     // Validate current step before proceeding
     if (currentStep === 1) {
       const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
@@ -108,10 +123,20 @@ const Register = () => {
         }
       });
       if (isValid && dateOfBirth) {
-        setIsUnder18(checkAge(dateOfBirth));
+        const under18 = checkAge(dateOfBirth);
+        setIsUnder18(under18);
+  
+        // If over 18, auto-fill guardian fields with "n/a"
+        if (!under18) {
+          setValue("guardianFirstName", "n/a");
+          setValue("guardianLastName", "n/a");
+          setValue("guardianEmail", "n/a");
+          setValue("guardianPhone", "n/a");
+          setValue("guardianRelationship", "n/a");
+        }
       }
     }
-    
+  
     if (currentStep === 2 && isUnder18) {
       const requiredFields = ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'];
       requiredFields.forEach(field => {
@@ -121,7 +146,7 @@ const Register = () => {
         }
       });
     }
-    
+  
     if (currentStep === 3) {
       const requiredFields = ['emergencyName', 'emergencyPhone', 'emergencyRelationship'];
       requiredFields.forEach(field => {
@@ -131,23 +156,28 @@ const Register = () => {
         }
       });
     }
-    
+  
     if (currentStep === 5) {
       if (!formData.photoVideoConsent) {
         newFieldErrors.photoVideoConsent = true;
         isValid = false;
       }
-    }
-    
-    if (currentStep === 6) {
       if (!formData.agreedToTerms) {
         newFieldErrors.agreedToTerms = true;
         isValid = false;
       }
     }
     
+  
+    if (currentStep === 6) {
+      if (!formData.agreedToTerms) {
+        newFieldErrors.agreedToTerms = true;
+        isValid = false;
+      }
+    }
+  
     setFieldErrors(newFieldErrors);
-    
+  
     if (!isValid) {
       toast({
         title: "Please fill all required fields",
@@ -156,10 +186,10 @@ const Register = () => {
       });
       return;
     }
-    
+  
     // Clear errors if validation passes
     setFieldErrors({});
-    
+  
     // Skip guardian step if over 18
     if (currentStep === 1 && !checkAge(dateOfBirth)) {
       setCurrentStep(3);
@@ -169,7 +199,7 @@ const Register = () => {
       setCurrentStep(Math.min(currentStep + 1, totalSteps));
     }
   };
-
+  
   const prevStep = () => {
     // Skip guardian step if over 18
     if (currentStep === 3 && !isUnder18) {
@@ -193,7 +223,7 @@ const Register = () => {
           stepLabels={stepLabels}
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-card rounded-2xl p-8 shadow-lg">
+        <form className="bg-card rounded-2xl p-8 shadow-lg">
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
@@ -523,11 +553,13 @@ const Register = () => {
               </Button>
             ) : (
               <Button 
-                type="submit"
+                type="button"
                 variant="hero"
+                onClick={handleSubmit(onSubmit)}
                 className="flex items-center gap-2"
+                disabled={isSubmitting}
               >
-                Submit Registration
+                {isSubmitting ? "Submitting..." : "Submit Registration"}
               </Button>
             )}
           </div>

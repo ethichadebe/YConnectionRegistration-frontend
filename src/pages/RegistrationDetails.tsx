@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, Phone, Mail, Calendar, MapPin, Shield, Heart, FileText, Camera } from "lucide-react";
+import { ArrowLeft, User, Phone, Mail, Calendar, MapPin, Shield, Heart, FileText, Camera, Loader2 } from "lucide-react";
 
 interface Registration {
   id: string;
@@ -34,35 +34,43 @@ const RegistrationDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [registration, setRegistration] = useState<Registration | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if admin is logged in
-    const isLoggedIn = localStorage.getItem("isAdminLoggedIn");
-    if (!isLoggedIn) {
-      navigate("/admin/login");
-      return;
-    }
+    const fetchRegistration = async () => {
+      try {
+        const response = await fetch(`https://yconnectionregistration-backend.onrender.com/api/registration/${id}`);
+        const data = await response.json();
+        setRegistration(data);
+      } catch (error) {
+        console.error("Error fetching registration:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Load registration from localStorage
-    const saved = localStorage.getItem("registrations");
-    if (saved) {
-      const registrations = JSON.parse(saved);
-      const found = registrations.find((reg: Registration) => reg.id === id);
-      setRegistration(found || null);
-    }
-  }, [id, navigate]);
+    fetchRegistration();
+  }, [id]);
 
   const calculateAge = (dateOfBirth: string) => {
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
     return age;
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-camp-navy" />
+      </div>
+    );
+  }
 
   if (!registration) {
     return (
@@ -112,7 +120,7 @@ const RegistrationDetails = () => {
                 <User className="w-5 h-5 text-camp-navy" />
                 <h2 className="text-xl font-semibold text-camp-navy">Personal Information</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-camp-navy">Name</label>
@@ -157,7 +165,7 @@ const RegistrationDetails = () => {
                   <Shield className="w-5 h-5 text-camp-navy" />
                   <h2 className="text-xl font-semibold text-camp-navy">Guardian Information</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-camp-navy">Guardian Name</label>
@@ -185,7 +193,7 @@ const RegistrationDetails = () => {
                 <Phone className="w-5 h-5 text-camp-navy" />
                 <h2 className="text-xl font-semibold text-camp-navy">Emergency Contact</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-camp-navy">Name</label>
@@ -208,7 +216,7 @@ const RegistrationDetails = () => {
                 <Heart className="w-5 h-5 text-camp-navy" />
                 <h2 className="text-xl font-semibold text-camp-navy">Medical Information</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-camp-navy">Medical Conditions</label>
@@ -231,7 +239,7 @@ const RegistrationDetails = () => {
                 <Camera className="w-5 h-5 text-camp-navy" />
                 <h2 className="text-xl font-semibold text-camp-navy">Consent & Permissions</h2>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium text-camp-navy">Photo/Video Consent</label>
@@ -256,7 +264,7 @@ const RegistrationDetails = () => {
                 <FileText className="w-5 h-5 text-camp-navy" />
                 <h2 className="text-xl font-semibold text-camp-navy">Registration Summary</h2>
               </div>
-              
+
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-camp-navy">Registration ID</span>
@@ -280,14 +288,18 @@ const RegistrationDetails = () => {
             <div className="bg-card rounded-lg p-6 shadow-sm">
               <h3 className="font-semibold text-camp-navy mb-3">Quick Actions</h3>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send Email
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Participant
-                </Button>
+                <a href={`mailto:${registration.email}`} className="w-full">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Email
+                  </Button>
+                </a>
+                <a href={`tel:${registration.phone}`} className="w-full">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Participant
+                  </Button>
+                </a>
               </div>
             </div>
           </div>
