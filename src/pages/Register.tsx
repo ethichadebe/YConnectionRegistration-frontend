@@ -54,7 +54,7 @@ const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormData>();
+  const { register, handleSubmit, formState: { errors }, watch, setValue, trigger } = useForm<FormData>();
   
   const totalSteps = 6;
   const stepLabels = ["Personal", "Guardian", "Emergency", "Medical", "Consent", "Review"];
@@ -108,11 +108,35 @@ const Register = () => {
     }
   };
       
-  const nextStep = () => {
+  const nextStep = async () => {
     const formData = watch();
     let isValid = true;
     const newFieldErrors: Record<string, boolean> = {};
-  
+    
+    // Trigger validation for visible fields
+    let fieldsToValidate: Array<keyof FormData> = [];
+    
+    if (currentStep === 1) {
+      fieldsToValidate = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
+    } else if (currentStep === 2 && isUnder18) {
+      fieldsToValidate = ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'];
+    } else if (currentStep === 3) {
+      fieldsToValidate = ['emergencyName', 'emergencyPhone', 'emergencyRelationship'];
+    } else if (currentStep === 5) {
+      fieldsToValidate = ['photoVideoConsent', 'agreedToTerms'];
+    }
+    
+    const isStepValid = await trigger(fieldsToValidate as any);
+    
+    if (!isStepValid) {
+      toast({
+        title: "Please fix the errors",
+        description: "Ensure all required fields are correctly filled.",
+        variant: "destructive",
+      });
+      return;
+    }
+      
     // Validate current step before proceeding
     if (currentStep === 1) {
       const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
@@ -259,10 +283,15 @@ const Register = () => {
                   className={`form-input ${fieldErrors.email ? 'error' : ''}`}
                   {...register("email", { 
                     required: "Email is required",
-                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" }
+                    pattern: { 
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
+                      message: "Enter a valid email address (e.g. name@example.com)" 
+                    }
                   })}
                 />
-                {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-destructive text-sm mt-1">{errors.email.message}</p>
+                )}
               </div>
 
               <div>
@@ -271,7 +300,13 @@ const Register = () => {
                   id="phone"
                   type="tel"
                   className={`form-input ${fieldErrors.phone ? 'error' : ''}`}
-                  {...register("phone", { required: "Phone number is required" })}
+                  {...register("phone", { 
+                    required: "Phone number is required",
+                    pattern: {
+                      value: /^\d{10}$/,
+                      message: "Phone number must be exactly 10 digits"
+                    }
+                  })}
                 />
                 {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>}
               </div>
@@ -353,9 +388,12 @@ const Register = () => {
                   className={`form-input ${fieldErrors.guardianEmail ? 'error' : ''}`}
                   {...register("guardianEmail", { 
                     required: isUnder18 ? "Guardian email is required" : false,
-                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" }
+                    pattern: { value: /^\S+@\S+$/, message: "Invalid email address" }
                   })}
                 />
+                {errors.guardianEmail && (
+                  <p className="text-destructive text-sm mt-1">{errors.guardianEmail.message}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -365,8 +403,17 @@ const Register = () => {
                     id="guardianPhone"
                     type="tel"
                     className={`form-input ${fieldErrors.guardianPhone ? 'error' : ''}`}
-                    {...register("guardianPhone", { required: isUnder18 ? "Guardian phone is required" : false })}
+                    {...register("guardianPhone", { 
+                      required: isUnder18 ? "Guardian phone is required" : false,
+                      pattern: {
+                        value: /^\d{10}$/,
+                        message: "Phone number must be exactly 10 digits"
+                      }
+                    })}
                   />
+                  {errors.guardianPhone && (
+                    <p className="text-destructive text-sm mt-1">{errors.guardianPhone.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -413,8 +460,12 @@ const Register = () => {
                     id="emergencyPhone"
                     type="tel"
                     className={`form-input ${fieldErrors.emergencyPhone ? 'error' : ''}`}
-                    {...register("emergencyPhone", { required: "Emergency phone is required" })}
+                    {...register("emergencyPhone", { 
+                      required: "Emergency phone is required",
+                      pattern: { value: /^\d{10}$/, message: "Phone number must be 10 digits" }
+                    })}
                   />
+                  {errors.emergencyPhone && <p className="text-destructive text-sm mt-1">{errors.emergencyPhone.message}</p>}
                 </div>
 
                 <div>
