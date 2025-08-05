@@ -44,6 +44,9 @@ const AdminDashboard = () => {
         const data = await response.json();
         setRegistrations(data);
         setFilteredRegistrations(data);
+    
+        // 👇 Scroll to top after data loads
+        window.scrollTo({ top: 0, behavior: "instant" }); // or "auto"
       } catch (err) {
         console.error(err);
         toast({ title: "Error loading data", variant: "destructive" });
@@ -51,7 +54,7 @@ const AdminDashboard = () => {
         setIsLoading(false);
       }
     };
-
+    
     fetchRegistrations();
   }, []);
 

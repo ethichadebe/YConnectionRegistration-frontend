@@ -8,7 +8,7 @@ const Footer = () => {
         marginTop: 'auto'
       }}>
         Powered by <a href="https://ethichadebe.me/" target="_blank" rel="noopener noreferrer" style={{ color: '#61bc21'}}>
-          Ethic Hdebe
+          Ethic Hadebe
         </a>
       </footer>
     );

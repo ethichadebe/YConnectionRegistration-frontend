@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import campHeader from "@/assets/camp-header.png";
@@ -5,6 +6,21 @@ import campBadge from "@/assets/camp-badge.png";
 
 const Landing = () => {
   const navigate = useNavigate();
+
+  // Ping the backend API on mount
+  useEffect(() => {
+    fetch("https://yconnectionregistration-backend.onrender.com/api/ping")
+      .then((res) => {
+        if (!res.ok) {
+          console.error("Ping failed:", res.statusText);
+        } else {
+          console.log("✅ Backend is awake!");
+        }
+      })
+      .catch((err) => {
+        console.error("Error pinging backend:", err);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-camp-cream to-muted">
@@ -16,7 +32,7 @@ const Landing = () => {
           className="w-full max-w-4xl object-cover"
         />
       </div>
-      
+
       {/* Main content */}
       <div className="container mx-auto px-4 py-8 text-center">
         {/* Camp badge */}
@@ -68,8 +84,8 @@ const Landing = () => {
             Register Now!
           </Button>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Payment of R300 must be made by [ 8 August 2025 ] <br/>
-          Banking Details: DHQ via Corps Account .
+            Payment of R300 must be made by [ 8 August 2025 ] <br/>
+            Banking Details: DHQ via Corps Account.
           </p>
         </div>
 
