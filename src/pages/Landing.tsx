@@ -84,7 +84,7 @@ const Landing = () => {
             Register Now!
           </Button>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            Payment of R300 must be made by [ 8 August 2025 ] <br/>
+            Payment of R300 must be made by [ 15 August 2025 ] <br/>
             Banking Details: DHQ via Corps Account.
           </p>
         </div>

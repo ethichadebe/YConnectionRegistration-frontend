@@ -1,12 +1,24 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Search, Users, Calendar, MapPin } from "lucide-react";
+import {
+  LogOut,
+  Search,
+  Users,
+  Calendar,
+  Download,
+} from "lucide-react";
+import * as XLSX from "xlsx";
 
 interface Registration {
   id: string;
@@ -44,9 +56,7 @@ const AdminDashboard = () => {
         const data = await response.json();
         setRegistrations(data);
         setFilteredRegistrations(data);
-    
-        // 👇 Scroll to top after data loads
-        window.scrollTo({ top: 0, behavior: "instant" }); // or "auto"
+        window.scrollTo({ top: 0, behavior: "instant" });
       } catch (err) {
         console.error(err);
         toast({ title: "Error loading data", variant: "destructive" });
@@ -54,7 +64,6 @@ const AdminDashboard = () => {
         setIsLoading(false);
       }
     };
-    
     fetchRegistrations();
   }, []);
 
@@ -118,6 +127,50 @@ const AdminDashboard = () => {
     return age;
   };
 
+  // === NEW: Export to Excel ===
+  const exportAllToExcel = () => {
+    try {
+      if (!registrations.length) {
+        toast({ title: "No data to export", description: "There are no registrations yet." });
+        return;
+      }
+
+      const rows = registrations.map((r) => ({
+        ID: r.id,
+        "First Name": r.firstName,
+        "Last Name": r.lastName,
+        Email: r.email,
+        Phone: r.phone,
+        "Date of Birth": r.dateOfBirth,
+        Age: calculateAge(r.dateOfBirth),
+        Gender: r.gender,
+        "Corps Name": r.corpsName,
+        "Under 18": r.isUnder18 ? "Yes" : "No",
+        "Guardian First Name": r.guardianFirstName || "",
+        "Guardian Last Name": r.guardianLastName || "",
+        "Emergency Name": r.emergencyName,
+        "Emergency Phone": r.emergencyPhone,
+        "Registered At": new Date(r.registeredAt).toLocaleString(),
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Registrations");
+
+      const timestamp = new Date()
+        .toISOString()
+        .replace(/[:T]/g, "-")
+        .split(".")[0];
+      const filename = `YC2025-Registrations-${timestamp}.xlsx`;
+
+      XLSX.writeFile(workbook, filename);
+      toast({ title: "Export complete", description: `Saved ${rows.length} rows to ${filename}` });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Export failed", variant: "destructive" });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="bg-card border-b border-border">
@@ -128,6 +181,7 @@ const AdminDashboard = () => {
           </Button>
         </div>
       </div>
+
       <div className="container mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
@@ -135,6 +189,7 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <>
+            {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-card rounded-lg p-6 shadow-sm">
                 <div className="flex items-center gap-4">
@@ -162,21 +217,31 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
+              {/* NEW: Export Card (replaces Different Corps) */}
               <div className="bg-card rounded-lg p-6 shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-camp-navy rounded-lg flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-white" />
+                    <Download className="w-6 h-6 text-white" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-2xl font-bold text-camp-navy">
-                      {new Set(registrations.map(r => r.corpsName)).size}
+                      Export
                     </p>
-                    <p className="text-sm text-muted-foreground">Different Corps</p>
+                    <p className="text-sm text-muted-foreground">Download all as Excel</p>
                   </div>
+                  <Button
+                    size="sm"
+                    onClick={exportAllToExcel}
+                    disabled={!registrations.length}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                 </div>
               </div>
             </div>
 
+            {/* Filters */}
             <div className="bg-card rounded-lg p-6 shadow-sm mb-8">
               <h2 className="text-lg font-semibold text-camp-navy mb-4">Filter Registrations</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -220,9 +285,13 @@ const AdminDashboard = () => {
               </p>
             </div>
 
+            {/* Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRegistrations.map((registration) => (
-                <div key={registration.id} className="bg-card rounded-lg p-6 shadow-sm border border-border">
+                <div
+                  key={registration.id}
+                  className="bg-card rounded-lg p-6 shadow-sm border border-border"
+                >
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="font-semibold text-lg text-camp-navy">
@@ -275,8 +344,8 @@ const AdminDashboard = () => {
                     <p className="text-xs text-muted-foreground">
                       Registered: {new Date(registration.registeredAt).toLocaleDateString()}
                     </p>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => navigate(`/admin/registration/${registration.id}`)}
                     >
@@ -291,8 +360,8 @@ const AdminDashboard = () => {
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg">No registrations found</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {registrations.length === 0 
-                    ? "No one has registered yet." 
+                  {registrations.length === 0
+                    ? "No one has registered yet."
                     : "Try adjusting your filters."}
                 </p>
               </div>
