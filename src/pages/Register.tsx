@@ -234,11 +234,15 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4 max-w-2xl">
+    <div className="min-h-screen bg-white">
+      <div style={{ background: "hsl(var(--camp-red))", height: "6px" }} />
+      <div className="container mx-auto px-4 max-w-2xl py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-camp-navy mb-2">YC2025 Registration</h1>
-          <p className="text-muted-foreground">Join us for an unforgettable experience!</p>
+          <h1 className="text-3xl font-bold mb-1" style={{ color: "hsl(var(--camp-red))" }}>
+            Y-CON 2026
+          </h1>
+          <p className="text-sm font-semibold tracking-widest text-muted-foreground mb-1">REGISTRATION</p>
+          <p className="text-muted-foreground text-sm">Join us for a divine encounter!</p>
         </div>
 
         <ProgressIndicator 
@@ -251,7 +255,7 @@ const Register = () => {
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Personal Information</h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Personal Information</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -357,7 +361,7 @@ const Register = () => {
           {/* Step 2: Guardian Information (only if under 18) */}
           {currentStep === 2 && isUnder18 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Guardian Information</h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Guardian Information</h2>
               <p className="text-muted-foreground mb-6">Since you're under 18, we need your guardian's information.</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -442,7 +446,7 @@ const Register = () => {
           {/* Step 3: Emergency Contact */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Emergency Contact</h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Emergency Contact</h2>
               
               <div>
                 <Label htmlFor="emergencyName">Emergency Contact Name *</Label>
@@ -482,7 +486,7 @@ const Register = () => {
 
           {currentStep === 4 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Medical Information</h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Medical Information</h2>
               
               <div>
                 <Label htmlFor="medicalConditions">Medical Conditions</Label>
@@ -519,7 +523,7 @@ const Register = () => {
           {/* Step 5: Consent */}
           {currentStep === 5 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Consent & Permissions</h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Consent & Permissions</h2>
               
               <div>
                 <Label className="text-base font-medium">Do you give permission for photos/videos of you to be used for promotional purposes? *</Label>
@@ -562,7 +566,7 @@ const Register = () => {
           {/* Step 6: Review & Submit */}
           {currentStep === 6 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-camp-navy mb-6">Review & Submit</h2>
+              <h2 className="text-2xl font-semibold text-foreground mb-6">Review & Submit</h2>
               
               <div className="bg-muted rounded-lg p-6 space-y-4">
                 <h3 className="font-semibold text-lg">Registration Summary</h3>
@@ -616,6 +620,7 @@ const Register = () => {
           </div>
         </form>
       </div>
+      <div style={{ background: "hsl(var(--camp-red))", height: "6px", marginTop: "2rem" }} />
     </div>
   );
 };
