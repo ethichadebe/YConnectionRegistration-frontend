@@ -11,13 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import {
-  LogOut,
-  Search,
-  Users,
-  Calendar,
-  Download,
-} from "lucide-react";
+import { LogOut, Search, Users, Calendar, Download } from "lucide-react";
 import * as XLSX from "xlsx";
 
 interface Registration {
@@ -73,16 +67,12 @@ const AdminDashboard = () => {
       navigate("/admin/login");
       return;
     }
-
     const saved = localStorage.getItem("registrations");
-    if (saved) {
-      setRegistrations(JSON.parse(saved));
-    }
+    if (saved) setRegistrations(JSON.parse(saved));
   }, [navigate]);
 
   useEffect(() => {
     let filtered = registrations;
-
     if (searchTerm) {
       filtered = filtered.filter(reg =>
         reg.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -91,28 +81,20 @@ const AdminDashboard = () => {
         reg.corpsName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
     if (ageFilter !== "all") {
-      filtered = filtered.filter(reg => {
-        if (ageFilter === "under18") return reg.isUnder18;
-        if (ageFilter === "over18") return !reg.isUnder18;
-        return true;
-      });
+      filtered = filtered.filter(reg =>
+        ageFilter === "under18" ? reg.isUnder18 : !reg.isUnder18
+      );
     }
-
     if (genderFilter !== "all") {
       filtered = filtered.filter(reg => reg.gender === genderFilter);
     }
-
     setFilteredRegistrations(filtered);
   }, [registrations, searchTerm, ageFilter, genderFilter]);
 
   const handleLogout = () => {
     localStorage.removeItem("isAdminLoggedIn");
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
+    toast({ title: "Logged Out", description: "You have been successfully logged out." });
     navigate("/");
   };
 
@@ -121,20 +103,16 @@ const AdminDashboard = () => {
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
     return age;
   };
 
-  // === NEW: Export to Excel ===
   const exportAllToExcel = () => {
     try {
       if (!registrations.length) {
         toast({ title: "No data to export", description: "There are no registrations yet." });
         return;
       }
-
       const rows = registrations.map((r) => ({
         ID: r.id,
         "First Name": r.firstName,
@@ -152,17 +130,11 @@ const AdminDashboard = () => {
         "Emergency Phone": r.emergencyPhone,
         "Registered At": new Date(r.registeredAt).toLocaleString(),
       }));
-
       const worksheet = XLSX.utils.json_to_sheet(rows);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Registrations");
-
-      const timestamp = new Date()
-        .toISOString()
-        .replace(/[:T]/g, "-")
-        .split(".")[0];
-      const filename = `YC2025-Registrations-${timestamp}.xlsx`;
-
+      const timestamp = new Date().toISOString().replace(/[:T]/g, "-").split(".")[0];
+      const filename = `YC2026-Registrations-${timestamp}.xlsx`;
       XLSX.writeFile(workbook, filename);
       toast({ title: "Export complete", description: `Saved ${rows.length} rows to ${filename}` });
     } catch (e) {
@@ -171,12 +143,19 @@ const AdminDashboard = () => {
     }
   };
 
+  const RED = "hsl(var(--camp-red))";
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="bg-card border-b border-border">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div style={{ borderBottom: "1px solid #f0f0f0" }}>
+        <div style={{ background: RED, height: "6px" }} />
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-camp-navy">YC2025 Admin Dashboard</h1>
-          <Button variant="outline" onClick={handleLogout}>
+          <div>
+            <span style={{ fontWeight: 900, fontSize: "1.1rem", color: RED }}>Y-CON 2026</span>
+            <span className="text-muted-foreground text-sm ml-2">Admin Dashboard</span>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" /> Logout
           </Button>
         </div>
@@ -185,68 +164,63 @@ const AdminDashboard = () => {
       <div className="container mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
-            <p className="text-muted-foreground text-lg">Loading registrations...</p>
+            <p className="text-muted-foreground">Loading registrations...</p>
           </div>
         ) : (
           <>
-            {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-card rounded-lg p-6 shadow-sm">
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              {/* Total */}
+              <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-camp-red rounded-lg flex items-center justify-center">
-                    <Users className="w-6 h-6 text-white" />
+                  <div style={{ width: 44, height: 44, background: RED, borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Users className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-camp-navy">{registrations.length}</p>
-                    <p className="text-sm text-muted-foreground">Total Registrations</p>
+                    <p className="text-2xl font-bold text-foreground">{registrations.length}</p>
+                    <p className="text-xs text-muted-foreground">Total Registrations</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-card rounded-lg p-6 shadow-sm">
+              {/* Under 18 */}
+              <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-camp-gold rounded-lg flex items-center justify-center">
-                    <Calendar className="w-6 h-6 text-camp-navy" />
+                  <div style={{ width: 44, height: 44, background: "#fff0f0", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${RED}` }}>
+                    <Calendar style={{ width: 20, height: 20, color: RED }} />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-camp-navy">
+                    <p className="text-2xl font-bold text-foreground">
                       {registrations.filter(r => r.isUnder18).length}
                     </p>
-                    <p className="text-sm text-muted-foreground">Under 18</p>
+                    <p className="text-xs text-muted-foreground">Under 18</p>
                   </div>
                 </div>
               </div>
 
-              {/* NEW: Export Card (replaces Different Corps) */}
-              <div className="bg-card rounded-lg p-6 shadow-sm">
+              {/* Export */}
+              <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-camp-navy rounded-lg flex items-center justify-center">
-                    <Download className="w-6 h-6 text-white" />
+                  <div style={{ width: 44, height: 44, background: "#f5f5f5", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Download className="w-5 h-5 text-foreground" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-2xl font-bold text-camp-navy">
-                      Export
-                    </p>
-                    <p className="text-sm text-muted-foreground">Download all as Excel</p>
+                    <p className="text-sm font-semibold text-foreground">Export</p>
+                    <p className="text-xs text-muted-foreground">Download all as Excel</p>
                   </div>
-                  <Button
-                    size="sm"
-                    onClick={exportAllToExcel}
-                    disabled={!registrations.length}
-                  >
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
+                  <Button size="sm" variant="outline" onClick={exportAllToExcel} disabled={!registrations.length}>
+                    <Download className="w-3 h-3 mr-1" /> Export
                   </Button>
                 </div>
               </div>
             </div>
 
             {/* Filters */}
-            <div className="bg-card rounded-lg p-6 shadow-sm mb-8">
-              <h2 className="text-lg font-semibold text-camp-navy mb-4">Filter Registrations</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}>
+              <p className="text-sm font-semibold text-foreground mb-3">Filter Registrations</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     placeholder="Search by name, email, or corps..."
                     value={searchTerm}
@@ -254,7 +228,6 @@ const AdminDashboard = () => {
                     className="pl-10"
                   />
                 </div>
-
                 <Select value={ageFilter} onValueChange={setAgeFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by age" />
@@ -265,7 +238,6 @@ const AdminDashboard = () => {
                     <SelectItem value="over18">18 and Over</SelectItem>
                   </SelectContent>
                 </Select>
-
                 <Select value={genderFilter} onValueChange={setGenderFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by gender" />
@@ -279,78 +251,83 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            <div className="mb-6">
-              <p className="text-sm text-muted-foreground">
-                Showing {filteredRegistrations.length} of {registrations.length} registrations
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground mb-4">
+              Showing {filteredRegistrations.length} of {registrations.length} registrations
+            </p>
 
-            {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRegistrations.map((registration) => (
+            {/* Registration cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredRegistrations.map((reg) => (
                 <div
-                  key={registration.id}
-                  className="bg-card rounded-lg p-6 shadow-sm border border-border"
+                  key={reg.id}
+                  style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="font-semibold text-lg text-camp-navy">
-                        {registration.firstName} {registration.lastName}
+                      <h3 className="font-semibold text-foreground">
+                        {reg.firstName} {reg.lastName}
                       </h3>
-                      <p className="text-sm text-muted-foreground">
-                        Age: {calculateAge(registration.dateOfBirth)}
-                      </p>
+                      <p className="text-xs text-muted-foreground">Age: {calculateAge(reg.dateOfBirth)}</p>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <Badge variant={registration.isUnder18 ? "secondary" : "default"}>
-                        {registration.isUnder18 ? "Under 18" : "Adult"}
+                    <div className="flex flex-col gap-1 items-end">
+                      <Badge
+                        style={reg.isUnder18
+                          ? { background: "#fff0f0", color: RED, border: `1px solid ${RED}`, fontSize: "0.65rem" }
+                          : { background: "#f5f5f5", color: "#555", fontSize: "0.65rem" }
+                        }
+                      >
+                        {reg.isUnder18 ? "Under 18" : "Adult"}
                       </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        {registration.gender}
+                      <Badge variant="outline" style={{ fontSize: "0.65rem" }}>
+                        {reg.gender}
                       </Badge>
                     </div>
                   </div>
 
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-1 text-sm">
                     <div>
-                      <span className="font-medium text-camp-navy">Email:</span>
-                      <p className="text-muted-foreground">{registration.email}</p>
+                      <span className="text-xs font-medium" style={{ color: RED }}>Email</span>
+                      <p className="text-muted-foreground text-xs">{reg.email}</p>
                     </div>
                     <div>
-                      <span className="font-medium text-camp-navy">Phone:</span>
-                      <p className="text-muted-foreground">{registration.phone}</p>
+                      <span className="text-xs font-medium" style={{ color: RED }}>Phone</span>
+                      <p className="text-muted-foreground text-xs">{reg.phone}</p>
                     </div>
                     <div>
-                      <span className="font-medium text-camp-navy">Corps:</span>
-                      <p className="text-muted-foreground">{registration.corpsName}</p>
+                      <span className="text-xs font-medium" style={{ color: RED }}>Corps</span>
+                      <p className="text-muted-foreground text-xs">{reg.corpsName}</p>
                     </div>
-                    {registration.isUnder18 && registration.guardianFirstName && (
+                    {reg.isUnder18 && reg.guardianFirstName && (
                       <div>
-                        <span className="font-medium text-camp-navy">Guardian:</span>
-                        <p className="text-muted-foreground">
-                          {registration.guardianFirstName} {registration.guardianLastName}
-                        </p>
+                        <span className="text-xs font-medium" style={{ color: RED }}>Guardian</span>
+                        <p className="text-muted-foreground text-xs">{reg.guardianFirstName} {reg.guardianLastName}</p>
                       </div>
                     )}
                     <div>
-                      <span className="font-medium text-camp-navy">Emergency Contact:</span>
-                      <p className="text-muted-foreground">
-                        {registration.emergencyName} - {registration.emergencyPhone}
-                      </p>
+                      <span className="text-xs font-medium" style={{ color: RED }}>Emergency</span>
+                      <p className="text-muted-foreground text-xs">{reg.emergencyName} — {reg.emergencyPhone}</p>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-border flex justify-between items-center">
+                  <div className="mt-4 pt-3 flex justify-between items-center" style={{ borderTop: "1px solid #f0f0f0" }}>
                     <p className="text-xs text-muted-foreground">
-                      Registered: {new Date(registration.registeredAt).toLocaleDateString()}
+                      {new Date(reg.registeredAt).toLocaleDateString()}
                     </p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => navigate(`/admin/registration/${registration.id}`)}
+                    <button
+                      onClick={() => navigate(`/admin/registration/${reg.id}`)}
+                      style={{
+                        background: "none",
+                        border: "1px solid #e0e0e0",
+                        borderRadius: "6px",
+                        padding: "4px 12px",
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        color: "#333",
+                      }}
                     >
                       View Details
-                    </Button>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -358,17 +335,17 @@ const AdminDashboard = () => {
 
             {filteredRegistrations.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">No registrations found</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {registrations.length === 0
-                    ? "No one has registered yet."
-                    : "Try adjusting your filters."}
+                <p className="text-muted-foreground">No registrations found</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {registrations.length === 0 ? "No one has registered yet." : "Try adjusting your filters."}
                 </p>
               </div>
             )}
           </>
         )}
       </div>
+
+      <div style={{ background: RED, height: "6px" }} />
     </div>
   );
 };
