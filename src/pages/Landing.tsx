@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import campHeader from "@/assets/camp-header.png"; // TODO: replace with Y-CON 2026 poster banner
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -14,162 +15,114 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Top stripe */}
-      <div style={{ background: "hsl(var(--camp-red))", height: "6px" }} />
+    <div style={{ background: "#f7f7f7", minHeight: "100vh" }}>
+      {/* Full-width poster banner — replace src with Y-CON 2026 poster image */}
+      <img
+        src={campHeader}
+        alt="Y-CON 2026 — Central Division"
+        style={{ width: "100%", display: "block", maxHeight: 280, objectFit: "cover" }}
+      />
 
-      <div className="max-w-md mx-auto px-6 pt-10 pb-8">
-        {/* red. branding */}
-        <div className="flex items-center gap-3 mb-12">
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              background: "hsl(var(--camp-red))",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <span style={{ color: "white", fontWeight: 900, fontSize: "0.6rem", textAlign: "center", lineHeight: 1.1 }}>
-              TSA
+      <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px 40px" }}>
+        {/* Title block */}
+        <div style={{
+          textAlign: "center",
+          padding: "24px 20px",
+          background: "white",
+          margin: "0 -20px",
+          borderBottom: "1px solid #eee",
+        }}>
+          <h1 style={{ fontWeight: 900, fontSize: "2rem", color: "#1a1f3c", margin: 0, lineHeight: 1.1 }}>
+            Y-Connexion 2026
+          </h1>
+          <p style={{ color: "hsl(var(--camp-red))", fontWeight: 800, fontSize: "1rem", margin: "6px 0 4px", letterSpacing: "0.05em" }}>
+            #YC2026
+          </p>
+          <p style={{ color: "#aaa", fontWeight: 600, fontSize: "0.85rem", margin: 0 }}>
+            Central Division Youth Camp
+          </p>
+        </div>
+
+        {/* SEE theme image + hashtag — replace placeholder with SEE sunglasses image */}
+        <div style={{
+          background: "white",
+          margin: "12px 0",
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+        }}>
+          {/* Image placeholder — swap this div for an <img> once you have the SEE image */}
+          <div style={{
+            width: "100%",
+            height: 180,
+            background: "repeating-linear-gradient(45deg,#f0f0f0 0px,#f0f0f0 10px,#f8f8f8 10px,#f8f8f8 20px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <span style={{ fontSize: "0.75rem", color: "#bbb", fontWeight: 600, background: "white", padding: "4px 12px", borderRadius: 4 }}>
+              [ SEE Theme Image ]
             </span>
           </div>
-          <div>
-            <div style={{ fontWeight: 900, fontSize: "1.4rem", color: "hsl(var(--camp-red))", lineHeight: 1 }}>
-              red.
-            </div>
-            <div style={{ fontSize: "0.6rem", color: "#888", letterSpacing: "0.08em" }}>
-              REACH · EVANGELISE · DISCIPLE
-            </div>
+          <div style={{ padding: "14px 16px", textAlign: "center" }}>
+            <p style={{ color: "hsl(var(--camp-red))", fontWeight: 900, fontSize: "1.3rem", margin: "0 0 2px", letterSpacing: "0.05em" }}>
+              #SEE2026
+            </p>
+            <p style={{ color: "#888", fontSize: "0.8rem", margin: 0, fontStyle: "italic" }}>
+              "Believe. Behold. Become." — 2 Kings 6:16–17
+            </p>
           </div>
         </div>
 
-        {/* Signal icon */}
-        <div className="flex justify-center mb-8" style={{ position: "relative", height: "100px" }}>
-          {[84, 58, 32].map((size, i) => (
-            <div
-              key={i}
-              style={{
-                position: "absolute",
-                width: size,
-                height: size,
-                border: `${i === 0 ? 3 : 2}px solid hsl(var(--camp-red))`,
-                borderRadius: "50%",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                opacity: 1 - i * 0.25,
-              }}
-            />
-          ))}
-          <div
-            style={{
-              position: "absolute",
-              width: 10,
-              height: 10,
-              background: "hsl(var(--camp-red))",
-              borderRadius: "50%",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-            }}
-          />
-        </div>
-
-        {/* Event name */}
-        <div className="text-center mb-2">
-          <h1 style={{ fontWeight: 900, fontSize: "2.8rem", color: "#111", lineHeight: 1, letterSpacing: "-0.03em" }}>
-            Y-CON <span style={{ color: "hsl(var(--camp-red))" }}>2026</span>
-          </h1>
-          <div
-            style={{
-              color: "hsl(var(--camp-red))",
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              fontSize: "0.75rem",
-              marginTop: "6px",
-            }}
-          >
-            CENTRAL DIVISION
-          </div>
-        </div>
-
-        {/* Theme */}
-        <div className="text-center my-6">
-          <div style={{ fontSize: "0.7rem", color: "#bbb", marginBottom: "4px", letterSpacing: "0.12em" }}>
-            THEME
-          </div>
-          <div style={{ fontWeight: 900, fontSize: "2.5rem", color: "hsl(var(--camp-red))" }}>SEE</div>
-          <div style={{ fontSize: "0.75rem", color: "#888" }}>2 Kings 6:16–17</div>
-          <p style={{ color: "#555", marginTop: "10px", fontSize: "0.9rem", fontStyle: "italic", lineHeight: 1.55 }}>
-            "It's more than a conference. It's a divine encounter!"
+        {/* Event details */}
+        <div style={{
+          background: "white",
+          borderRadius: 12,
+          padding: "18px 20px",
+          margin: "12px 0",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+        }}>
+          <p style={{ textAlign: "center", color: "#333", lineHeight: 2, margin: 0, fontSize: "0.9rem" }}>
+            3–5 July 2026<br />
+            The Mighty Apies River<br />
+            Registration Fee: R550
           </p>
-          <p style={{ color: "#888", marginTop: "6px", fontSize: "0.8rem" }}>Believe. Behold. Become.</p>
-        </div>
-
-        {/* Details card */}
-        <div
-          style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}
-        >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px", textAlign: "center" }}>
-            {[
-              { label: "Date", value: "3–5 July\n2026" },
-              { label: "Venue", value: "Mighty Apies\nPretoria" },
-              { label: "Cost", value: "R550\nper person" },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <div
-                  style={{
-                    fontSize: "0.6rem",
-                    color: "hsl(var(--camp-red))",
-                    fontWeight: 700,
-                    letterSpacing: "0.1em",
-                    marginBottom: "4px",
-                  }}
-                >
-                  {label.toUpperCase()}
-                </div>
-                <div style={{ fontWeight: 700, fontSize: "0.85rem", whiteSpace: "pre-line", lineHeight: 1.3 }}>
-                  {value}
-                </div>
-              </div>
-            ))}
+          <div style={{ borderTop: "1px solid #f0f0f0", marginTop: 14, paddingTop: 14, textAlign: "center" }}>
+            <p style={{ margin: 0, fontWeight: 800, fontSize: "0.9rem", color: "#1a1f3c" }}>
+              Registration Closes: 20 June 2026
+            </p>
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center">
+        {/* CTA buttons */}
+        <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
           <button
             onClick={() => navigate("/register")}
             style={{
+              flex: 1,
               background: "hsl(var(--camp-red))",
               color: "white",
               border: "none",
               padding: "14px 0",
+              fontWeight: 800,
               fontSize: "1rem",
-              fontWeight: 700,
-              borderRadius: "6px",
+              borderRadius: 8,
               cursor: "pointer",
-              width: "100%",
             }}
           >
             Register Now
           </button>
-          <p style={{ color: "#bbb", fontSize: "0.7rem", marginTop: "8px" }}>Meals &amp; accommodation included</p>
-        </div>
-
-        {/* Admin link */}
-        <div className="mt-12 pt-6 text-center" style={{ borderTop: "1px solid #f0f0f0" }}>
           <button
             onClick={() => navigate("/admin/login")}
             style={{
-              background: "none",
+              flex: 1,
+              background: "#1a1f3c",
+              color: "white",
               border: "none",
-              color: "#bbb",
-              fontSize: "0.75rem",
+              padding: "14px 0",
+              fontWeight: 800,
+              fontSize: "1rem",
+              borderRadius: 8,
               cursor: "pointer",
             }}
           >
@@ -177,9 +130,6 @@ const Landing = () => {
           </button>
         </div>
       </div>
-
-      {/* Bottom stripe */}
-      <div style={{ background: "hsl(var(--camp-red))", height: "6px" }} />
     </div>
   );
 };

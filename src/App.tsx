@@ -35,7 +35,7 @@ const AppRoutes = () => {
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/registration/:id" element={<RegistrationDetails />} />
-      <Route path="*" element={<NotFound />} />
+<Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
