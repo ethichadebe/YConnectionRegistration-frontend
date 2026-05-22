@@ -45,7 +45,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename="/yc2025registration">
+      <BrowserRouter basename="/">
         <AppRoutes />
       </BrowserRouter>
       <Footer />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -165,6 +165,11 @@ const Register = () => {
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, trigger } = useForm<FormData>();
 
+  // Wake up the backend as soon as the register page loads
+  useEffect(() => {
+    fetch("https://yconnectionregistration-backend.onrender.com/api/ping").catch(() => {});
+  }, []);
+
   const totalSteps = 6;
   const stepLabels = ["Personal", "Guardian", "Emergency", "Medical", "Consent", "Review"];
   const dateOfBirth = watch("dateOfBirth");
@@ -185,18 +190,29 @@ const Register = () => {
     data.medications = data.medications?.trim() || "None";
     data.allergies = data.allergies?.trim() || "None";
     setIsSubmitting(true);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
     try {
       const response = await fetch("https://yconnectionregistration-backend.onrender.com/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
+        signal: controller.signal,
       });
-      if (!response.ok) throw new Error("Failed to register");
+      clearTimeout(timeout);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.details || body.error || `Server error ${response.status}`);
+      }
       toast({ title: "Registration Successful!" });
       navigate("/confirmation");
-    } catch (error) {
+    } catch (error: any) {
+      clearTimeout(timeout);
       console.error(error);
-      toast({ title: "Something went wrong.", variant: "destructive" });
+      const msg = error.name === "AbortError"
+        ? "The server is taking too long to respond. Please wait 30 seconds and try again."
+        : (error.message || "Something went wrong. Please try again.");
+      toast({ title: "Registration Failed", description: msg, variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
