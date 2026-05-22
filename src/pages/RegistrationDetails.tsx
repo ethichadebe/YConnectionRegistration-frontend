@@ -37,27 +37,27 @@ const CSS = `
   }
   .rd-grain {
     position:fixed;inset:0;z-index:9997;pointer-events:none;
-    background-image:radial-gradient(circle,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-image:radial-gradient(circle,rgba(0,0,0,.04) 1px,transparent 1px);
     background-size:3px 3px;
   }
   .rd-card {
-    background:rgba(255,255,255,.04);border:1px solid rgba(245,237,214,.08);
-    border-left:3px solid rgba(245,237,214,.12);
+    background:white;border:1px solid rgba(13,9,5,.09);
+    border-left:3px solid rgba(13,9,5,.12);
     padding:22px 24px;margin-bottom:16px;
   }
-  .rd-card-red { border-left-color:#C8001A; }
+  .rd-card-red  { border-left-color:#C8001A; }
   .rd-card-gold { border-left-color:#F5B800; }
   .rd-label {
     font-family:'Courier New',monospace;font-size:8px;letter-spacing:3px;
-    text-transform:uppercase;color:#F5B800;display:block;margin-bottom:3px;
+    text-transform:uppercase;color:#C8001A;display:block;margin-bottom:3px;
   }
   .rd-value {
     font-family:'Libre Baskerville',Georgia,serif;font-size:13px;
-    color:rgba(245,237,214,.75);line-height:1.5;
+    color:rgba(13,9,5,.7);line-height:1.5;
   }
   .rd-section-title {
     font-family:'Courier New',monospace;font-size:8px;letter-spacing:3px;
-    text-transform:uppercase;color:rgba(245,237,214,.4);margin:0 0 18px;
+    text-transform:uppercase;color:rgba(13,9,5,.38);margin:0 0 18px;
   }
   .rd-btn {
     position:relative;overflow:hidden;cursor:pointer;border:none;
@@ -67,22 +67,22 @@ const CSS = `
   }
   .rd-btn::before {
     content:'';position:absolute;top:50%;left:50%;
-    width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,.22);
+    width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,.12);
     transform:translate(-50%,-50%) scale(0);
     transition:transform .6s cubic-bezier(.16,1,.3,1);
   }
   .rd-btn:hover::before { transform:translate(-50%,-50%) scale(32); }
   .rd-btn-ghost {
-    background:rgba(245,237,214,.07);color:rgba(245,237,214,.6);
-    padding:9px 16px;font-size:13px;border:1px solid rgba(245,237,214,.12);
+    background:rgba(13,9,5,.06);color:rgba(13,9,5,.55);
+    padding:9px 16px;font-size:13px;border:1px solid rgba(13,9,5,.12);
   }
-  .rd-btn-ghost:hover { background:rgba(245,237,214,.12); }
+  .rd-btn-ghost:hover { background:rgba(13,9,5,.1); }
   .rd-btn-action {
-    background:rgba(200,0,26,.15);color:#C8001A;
-    padding:10px 18px;font-size:13px;border:1px solid rgba(200,0,26,.3);
+    background:rgba(200,0,26,.07);color:#C8001A;
+    padding:10px 18px;font-size:13px;border:1px solid rgba(200,0,26,.2);
     width:100%;
   }
-  .rd-btn-action:hover { background:rgba(200,0,26,.25); }
+  .rd-btn-action:hover { background:rgba(200,0,26,.14); }
   @keyframes rd-fadeIn {
     from { opacity:0;transform:translateY(14px); }
     to   { opacity:1;transform:none; }
@@ -122,43 +122,43 @@ const RegistrationDetails = () => {
 
   if (loading) {
     return (
-      <div style={{ background: "#0D0905", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+      <div style={{ background: "#F5EDD6", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
         <style>{CSS}</style>
         <div className="rd-grain" aria-hidden="true" />
-        <div style={{ width: 40, height: 40, border: "3px solid rgba(245,237,214,.1)", borderTop: "3px solid #C8001A", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <div style={{ width: 40, height: 40, border: "3px solid rgba(13,9,5,.1)", borderTop: "3px solid #C8001A", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, letterSpacing: "3px", color: "rgba(245,237,214,.3)", textTransform: "uppercase" }}>Loading…</p>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, letterSpacing: "3px", color: "rgba(13,9,5,.3)", textTransform: "uppercase" }}>Loading…</p>
       </div>
     );
   }
 
   if (!registration) {
     return (
-      <div style={{ background: "#0D0905", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+      <div style={{ background: "#F5EDD6", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
         <style>{CSS}</style>
         <div className="rd-grain" aria-hidden="true" />
-        <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 32, color: "rgba(245,237,214,.2)", letterSpacing: ".1em" }}>NOT FOUND</p>
-        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, color: "rgba(245,237,214,.25)", letterSpacing: "2px", textTransform: "uppercase" }}>Registration could not be found.</p>
+        <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 32, color: "rgba(13,9,5,.2)", letterSpacing: ".1em" }}>NOT FOUND</p>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, color: "rgba(13,9,5,.3)", letterSpacing: "2px", textTransform: "uppercase" }}>Registration could not be found.</p>
         <button className="rd-btn rd-btn-ghost" onClick={() => navigate("/admin/dashboard")}>← Back to Dashboard</button>
       </div>
     );
   }
 
   return (
-    <div style={{ background: "#0D0905", minHeight: "100vh", color: "#F5EDD6" }}>
+    <div style={{ background: "#F5EDD6", minHeight: "100vh", color: "#0D0905" }}>
       <style>{CSS}</style>
       <div className="rd-grain" aria-hidden="true" />
 
       {/* Nav */}
-      <nav style={{ borderBottom: "1px solid rgba(245,237,214,.08)", padding: "0 20px" }}>
+      <nav style={{ background: "rgba(245,237,214,.97)", borderBottom: "2px solid #C8001A", padding: "0 20px", position: "sticky", top: 0, zIndex: 100, backdropFilter: "blur(12px)" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "center", gap: 16, height: 60 }}>
           <button className="rd-btn rd-btn-ghost" onClick={() => navigate("/admin/dashboard")}>← Back</button>
-          <div style={{ width: 1, height: 20, background: "rgba(245,237,214,.12)" }} />
+          <div style={{ width: 1, height: 20, background: "rgba(13,9,5,.12)" }} />
           <div>
-            <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 20, color: "#F5EDD6", letterSpacing: ".06em", margin: 0, lineHeight: 1 }}>
+            <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 20, color: "#0D0905", letterSpacing: ".06em", margin: 0, lineHeight: 1 }}>
               {registration.firstName} {registration.lastName}
             </p>
-            <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, color: "rgba(245,237,214,.3)", letterSpacing: "2px", textTransform: "uppercase", margin: 0 }}>
+            <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, color: "rgba(13,9,5,.35)", letterSpacing: "2px", textTransform: "uppercase", margin: 0 }}>
               Registration Details
             </p>
           </div>
@@ -166,28 +166,43 @@ const RegistrationDetails = () => {
       </nav>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 20px 60px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,2fr) minmax(0,1fr)", gap: 20, alignItems: "start" }}
+          className="rd-appear">
 
-          {/* Main layout */}
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,2fr) minmax(0,1fr)", gap: 20, alignItems: "start" }}
-            className="rd-appear">
+          {/* LEFT: detail sections */}
+          <div>
+            {/* Personal */}
+            <div className="rd-card rd-card-red">
+              <p className="rd-section-title">// Personal Information</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
+                {[
+                  { l: "Full Name", v: `${registration.firstName} ${registration.lastName}` },
+                  { l: "Age", v: `${calculateAge(registration.dateOfBirth)} years old` },
+                  { l: "Email", v: registration.email },
+                  { l: "Phone", v: registration.phone },
+                  { l: "Date of Birth", v: new Date(registration.dateOfBirth).toLocaleDateString() },
+                  { l: "Gender", v: registration.gender },
+                  { l: "Corps", v: registration.corpsName },
+                  { l: "Age Category", v: registration.isUnder18 ? "Under 18" : "Adult (18+)" },
+                ].map(({ l, v }) => (
+                  <div key={l}>
+                    <span className="rd-label">{l}</span>
+                    <span className="rd-value">{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            {/* LEFT: detail sections */}
-            <div>
-
-              {/* Personal */}
-              <div className="rd-card rd-card-red">
-                <p className="rd-section-title">// Personal Information</p>
+            {/* Guardian */}
+            {registration.isUnder18 && registration.guardianFirstName && (
+              <div className="rd-card rd-card-gold">
+                <p className="rd-section-title">// Guardian Information</p>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
                   {[
-                    { l: "Full Name", v: `${registration.firstName} ${registration.lastName}` },
-                    { l: "Age", v: `${calculateAge(registration.dateOfBirth)} years old` },
-                    { l: "Email", v: registration.email },
-                    { l: "Phone", v: registration.phone },
-                    { l: "Date of Birth", v: new Date(registration.dateOfBirth).toLocaleDateString() },
-                    { l: "Gender", v: registration.gender },
-                    { l: "Corps", v: registration.corpsName },
-                    { l: "Age Category", v: registration.isUnder18 ? "Under 18" : "Adult (18+)" },
+                    { l: "Guardian Name", v: `${registration.guardianFirstName} ${registration.guardianLastName}` },
+                    { l: "Relationship", v: registration.guardianRelationship || "—" },
+                    { l: "Guardian Email", v: registration.guardianEmail || "—" },
+                    { l: "Guardian Phone", v: registration.guardianPhone || "—" },
                   ].map(({ l, v }) => (
                     <div key={l}>
                       <span className="rd-label">{l}</span>
@@ -196,135 +211,112 @@ const RegistrationDetails = () => {
                   ))}
                 </div>
               </div>
+            )}
 
-              {/* Guardian */}
-              {registration.isUnder18 && registration.guardianFirstName && (
-                <div className="rd-card rd-card-gold">
-                  <p className="rd-section-title">// Guardian Information</p>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
-                    {[
-                      { l: "Guardian Name", v: `${registration.guardianFirstName} ${registration.guardianLastName}` },
-                      { l: "Relationship", v: registration.guardianRelationship || "—" },
-                      { l: "Guardian Email", v: registration.guardianEmail || "—" },
-                      { l: "Guardian Phone", v: registration.guardianPhone || "—" },
-                    ].map(({ l, v }) => (
-                      <div key={l}>
-                        <span className="rd-label">{l}</span>
-                        <span className="rd-value">{v}</span>
-                      </div>
-                    ))}
+            {/* Emergency */}
+            <div className="rd-card">
+              <p className="rd-section-title">// Emergency Contact</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
+                {[
+                  { l: "Name", v: registration.emergencyName },
+                  { l: "Phone", v: registration.emergencyPhone },
+                  { l: "Relationship", v: registration.emergencyRelationship },
+                ].map(({ l, v }) => (
+                  <div key={l}>
+                    <span className="rd-label">{l}</span>
+                    <span className="rd-value">{v}</span>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
+            </div>
 
-              {/* Emergency */}
-              <div className="rd-card">
-                <p className="rd-section-title">// Emergency Contact</p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
-                  {[
-                    { l: "Name", v: registration.emergencyName },
-                    { l: "Phone", v: registration.emergencyPhone },
-                    { l: "Relationship", v: registration.emergencyRelationship },
-                  ].map(({ l, v }) => (
-                    <div key={l}>
-                      <span className="rd-label">{l}</span>
-                      <span className="rd-value">{v}</span>
-                    </div>
-                  ))}
+            {/* Medical */}
+            <div className="rd-card">
+              <p className="rd-section-title">// Medical Information</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {[
+                  { l: "Medical Conditions", v: registration.medicalConditions || "None specified" },
+                  { l: "Current Medications", v: registration.medications || "None specified" },
+                  { l: "Allergies", v: registration.allergies || "None specified" },
+                ].map(({ l, v }) => (
+                  <div key={l}>
+                    <span className="rd-label">{l}</span>
+                    <span className="rd-value">{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Consent */}
+            <div className="rd-card">
+              <p className="rd-section-title">// Consent & Permissions</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div>
+                  <span className="rd-label">Photo / Video Consent</span>
+                  <span className="rd-value">
+                    {registration.photoVideoConsent === "yes" ? "Yes — consents to photos/videos" : "No — does not consent"}
+                  </span>
+                </div>
+                <div>
+                  <span className="rd-label">Terms & Camp Rules</span>
+                  <span className="rd-value">
+                    {registration.agreedToTerms ? "Agreed" : "Not agreed"}
+                  </span>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Medical */}
-              <div className="rd-card">
-                <p className="rd-section-title">// Medical Information</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  {[
-                    { l: "Medical Conditions", v: registration.medicalConditions || "None specified" },
-                    { l: "Current Medications", v: registration.medications || "None specified" },
-                    { l: "Allergies", v: registration.allergies || "None specified" },
-                  ].map(({ l, v }) => (
-                    <div key={l}>
-                      <span className="rd-label">{l}</span>
-                      <span className="rd-value">{v}</span>
-                    </div>
-                  ))}
+          {/* RIGHT: summary + actions */}
+          <div>
+            {/* Summary */}
+            <div className="rd-card rd-card-red" style={{ marginBottom: 16 }}>
+              <p className="rd-section-title">// Registration Summary</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div>
+                  <span className="rd-label">Reference ID</span>
+                  <span style={{ fontFamily: "'Courier New',monospace", fontSize: 13, color: "#C8001A", letterSpacing: "1px" }}>
+                    YC2026-{registration.id}
+                  </span>
                 </div>
-              </div>
-
-              {/* Consent */}
-              <div className="rd-card">
-                <p className="rd-section-title">// Consent & Permissions</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  <div>
-                    <span className="rd-label">Photo / Video Consent</span>
-                    <span className="rd-value">
-                      {registration.photoVideoConsent === "yes" ? "Yes — consents to photos/videos" : "No — does not consent"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="rd-label">Terms & Camp Rules</span>
-                    <span className="rd-value">
-                      {registration.agreedToTerms ? "Agreed" : "Not agreed"}
-                    </span>
-                  </div>
+                <div>
+                  <span className="rd-label">Registered</span>
+                  <span className="rd-value">{new Date(registration.registeredAt).toLocaleDateString()}</span>
+                </div>
+                <div>
+                  <span className="rd-label">Age Category</span>
+                  <span style={{
+                    fontFamily: "'Courier New',monospace", fontSize: 9, letterSpacing: "2px", textTransform: "uppercase",
+                    padding: "3px 10px", display: "inline-block",
+                    background: registration.isUnder18 ? "rgba(200,0,26,.08)" : "rgba(13,9,5,.05)",
+                    color: registration.isUnder18 ? "#C8001A" : "rgba(13,9,5,.4)",
+                    border: registration.isUnder18 ? "1px solid rgba(200,0,26,.2)" : "1px solid rgba(13,9,5,.1)",
+                  }}>
+                    {registration.isUnder18 ? "Under 18" : "Adult"}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* RIGHT: summary + actions */}
-            <div>
-
-              {/* Summary */}
-              <div className="rd-card rd-card-red" style={{ marginBottom: 16 }}>
-                <p className="rd-section-title">// Registration Summary</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  <div>
-                    <span className="rd-label">Reference ID</span>
-                    <span style={{ fontFamily: "'Courier New',monospace", fontSize: 13, color: "#C8001A", letterSpacing: "1px" }}>
-                      YC2026-{registration.id}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="rd-label">Registered</span>
-                    <span className="rd-value">{new Date(registration.registeredAt).toLocaleDateString()}</span>
-                  </div>
-                  <div>
-                    <span className="rd-label">Age Category</span>
-                    <span style={{
-                      fontFamily: "'Courier New',monospace", fontSize: 9, letterSpacing: "2px", textTransform: "uppercase",
-                      padding: "3px 10px",
-                      display: "inline-block",
-                      background: registration.isUnder18 ? "rgba(200,0,26,.18)" : "rgba(245,237,214,.07)",
-                      color: registration.isUnder18 ? "#C8001A" : "rgba(245,237,214,.5)",
-                      border: registration.isUnder18 ? "1px solid rgba(200,0,26,.3)" : "1px solid rgba(245,237,214,.12)",
-                    }}>
-                      {registration.isUnder18 ? "Under 18" : "Adult"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quick actions */}
-              <div className="rd-card">
-                <p className="rd-section-title">// Quick Actions</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  <a href={`mailto:${registration.email}`} style={{ textDecoration: "none" }}>
-                    <button className="rd-btn rd-btn-action">✉ Send Email</button>
-                  </a>
-                  <a href={`tel:${registration.phone}`} style={{ textDecoration: "none" }}>
-                    <button className="rd-btn rd-btn-action">✆ Call Youth</button>
-                  </a>
-                </div>
+            {/* Quick actions */}
+            <div className="rd-card">
+              <p className="rd-section-title">// Quick Actions</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <a href={`mailto:${registration.email}`} style={{ textDecoration: "none" }}>
+                  <button className="rd-btn rd-btn-action">✉ Send Email</button>
+                </a>
+                <a href={`tel:${registration.phone}`} style={{ textDecoration: "none" }}>
+                  <button className="rd-btn rd-btn-action">✆ Call Youth</button>
+                </a>
               </div>
             </div>
-
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div style={{ borderTop: "1px solid rgba(245,237,214,.06)", padding: "16px 20px", textAlign: "center" }}>
-        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(245,237,214,.15)", letterSpacing: ".1em", textTransform: "uppercase", margin: 0 }}>
+      <div style={{ borderTop: "1px solid rgba(13,9,5,.08)", padding: "16px 20px", textAlign: "center" }}>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(13,9,5,.22)", letterSpacing: ".1em", textTransform: "uppercase", margin: 0 }}>
           Y-CON 2026 · Central Division · Admin Portal
         </p>
       </div>

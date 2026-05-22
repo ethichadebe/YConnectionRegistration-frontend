@@ -41,7 +41,7 @@ const CSS = `
   }
   .yr-nav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(13,9,5,.95);
+    background: rgba(245,237,214,.97);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-bottom: 2px solid var(--red);
     padding: 10px 20px;
@@ -277,7 +277,7 @@ const Register = () => {
       <nav className="yr-nav">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/assets/salvation-army-logo.png" alt="The Salvation Army" style={{ height: 26 }} />
-          <img src="/assets/red-logo.png" alt="red." style={{ height: 15, filter: "brightness(10)" }} />
+          <img src="/assets/red-logo.png" alt="red." style={{ height: 15 }} />
         </div>
         <span style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", color: "rgba(255,255,255,.55)", fontSize: 14, letterSpacing: ".2em" }}>
           REGISTRATION

@@ -12,22 +12,22 @@ const CSS = `
   }
   .ya-grain {
     position:fixed;inset:0;z-index:9997;pointer-events:none;
-    background-image:radial-gradient(circle,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-image:radial-gradient(circle,rgba(0,0,0,.045) 1px,transparent 1px);
     background-size:3px 3px;
   }
   .ya-label {
     display:block;font-family:var(--mono);font-size:9px;letter-spacing:2.5px;
-    text-transform:uppercase;color:rgba(245,237,214,.4);margin-bottom:5px;
+    text-transform:uppercase;color:rgba(13,9,5,.45);margin-bottom:5px;
   }
   .ya-input {
-    display:block;width:100%;background:rgba(255,255,255,.06);
-    border:1.5px solid rgba(245,237,214,.12);padding:11px 14px;
-    font-family:var(--body);font-size:14px;color:var(--cream);
+    display:block;width:100%;background:white;
+    border:1.5px solid rgba(13,9,5,.15);padding:11px 14px;
+    font-family:var(--body);font-size:14px;color:var(--ink);
     outline:none;transition:border-color .2s,background .2s;
     border-radius:0;-webkit-appearance:none;appearance:none;box-sizing:border-box;
   }
-  .ya-input:focus { border-color:var(--red);background:rgba(255,255,255,.09); }
-  .ya-input::placeholder { color:rgba(245,237,214,.2); }
+  .ya-input:focus { border-color:var(--red);background:white; }
+  .ya-input::placeholder { color:rgba(13,9,5,.25); }
   .ya-btn {
     position:relative;overflow:hidden;cursor:pointer;border:none;
     font-family:var(--disp);letter-spacing:.12em;text-transform:uppercase;
@@ -67,20 +67,20 @@ const AdminLogin = () => {
   };
 
   return (
-    <div style={{ background: "#0D0905", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+    <div style={{ background: "#F5EDD6", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px" }}>
       <style>{CSS}</style>
       <div className="ya-grain" aria-hidden="true" />
 
       {/* Logos */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 36 }}>
-        <img src="/assets/salvation-army-logo.png" alt="The Salvation Army" style={{ height: 34, filter: "brightness(10)" }} />
-        <img src="/assets/red-logo.png" alt="red." style={{ height: 20, filter: "brightness(10)" }} />
+        <img src="/assets/salvation-army-logo.png" alt="The Salvation Army" style={{ height: 34 }} />
+        <img src="/assets/red-logo.png" alt="red." style={{ height: 20 }} />
       </div>
 
       {/* Login card */}
-      <div style={{ width: "100%", maxWidth: 360, background: "rgba(255,255,255,.04)", border: "1px solid rgba(245,237,214,.08)", borderLeft: "4px solid #C8001A", padding: "32px 28px" }}>
+      <div style={{ width: "100%", maxWidth: 360, background: "white", border: "1px solid rgba(13,9,5,.1)", borderLeft: "4px solid #C8001A", padding: "32px 28px" }}>
         <img src="/assets/ycon-logo.png" alt="Y-CON 2026"
-          style={{ width: 160, display: "block", margin: "0 auto 8px", mixBlendMode: "screen" }} />
+          style={{ width: 160, display: "block", margin: "0 auto 8px", mixBlendMode: "multiply" }} />
 
         <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, letterSpacing: "3px", color: "rgba(200,0,26,.7)", textTransform: "uppercase", textAlign: "center", margin: "0 0 28px" }}>
           // Admin Access
@@ -104,13 +104,13 @@ const AdminLogin = () => {
 
         <div style={{ marginTop: 20, textAlign: "center" }}>
           <button onClick={() => navigate("/")}
-            style={{ fontFamily: "'Courier New',monospace", color: "rgba(245,237,214,.25)", fontSize: 9, letterSpacing: ".12em", background: "none", border: "none", cursor: "pointer", textTransform: "uppercase" }}>
+            style={{ fontFamily: "'Courier New',monospace", color: "rgba(13,9,5,.3)", fontSize: 9, letterSpacing: ".12em", background: "none", border: "none", cursor: "pointer", textTransform: "uppercase" }}>
             ← Back to Home
           </button>
         </div>
       </div>
 
-      <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(245,237,214,.15)", letterSpacing: ".1em", textTransform: "uppercase", marginTop: 28 }}>
+      <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(13,9,5,.22)", letterSpacing: ".1em", textTransform: "uppercase", marginTop: 28 }}>
         Y-CON 2026 · Central Division · Admin
       </p>
     </div>

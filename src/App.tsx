@@ -12,7 +12,6 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import RegistrationDetails from "./pages/RegistrationDetails";
 import NotFound from "./pages/NotFound";
-import LandingPrototype from "./pages/prototype/LandingPrototype";
 import { initGA, logPageView } from "./lib/analytics";
 
 const queryClient = new QueryClient();
@@ -36,7 +35,6 @@ const AppRoutes = () => {
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/registration/:id" element={<RegistrationDetails />} />
-      <Route path="/prototype" element={<LandingPrototype />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
