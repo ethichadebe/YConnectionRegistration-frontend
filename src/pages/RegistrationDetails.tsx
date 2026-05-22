@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { API } from "@/lib/api";
 
 interface Registration {
   id: string;
@@ -99,7 +100,7 @@ const RegistrationDetails = () => {
   useEffect(() => {
     const fetchRegistration = async () => {
       try {
-        const response = await fetch(`https://yconnectionregistration-backend.onrender.com/api/registration/${id}`);
+        const response = await fetch(`${API}/api/registration/${id}`);
         const data = await response.json();
         setRegistration(data);
       } catch (error) {

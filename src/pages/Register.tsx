@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { API } from "@/lib/api";
 
 interface FormData {
   firstName: string;
@@ -167,7 +168,7 @@ const Register = () => {
 
   // Wake up the backend as soon as the register page loads
   useEffect(() => {
-    fetch("https://yconnectionregistration-backend.onrender.com/api/ping").catch(() => {});
+    fetch(`${API}/api/ping`).catch(() => {});
   }, []);
 
   const totalSteps = 6;
@@ -193,7 +194,7 @@ const Register = () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60000);
     try {
-      const response = await fetch("https://yconnectionregistration-backend.onrender.com/api/register", {
+      const response = await fetch(`${API}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

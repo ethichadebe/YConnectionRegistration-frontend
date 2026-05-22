@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
+import { API } from "@/lib/api";
 
 interface Registration {
   id: string;
@@ -104,7 +105,7 @@ const AdminDashboard = () => {
     const fetchRegistrations = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("https://yconnectionregistration-backend.onrender.com/api/registrations");
+        const response = await fetch(`${API}/api/registrations`);
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         setRegistrations(data);

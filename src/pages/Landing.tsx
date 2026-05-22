@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API } from "@/lib/api";
 
 const EVENT_DATE = new Date("2026-07-03T00:00:00");
 
@@ -422,7 +423,7 @@ const Landing = () => {
   const cd = useCountdown(EVENT_DATE);
 
   useEffect(() => {
-    fetch("https://yconnectionregistration-backend.onrender.com/api/ping").catch(() => {});
+    fetch(`${API}/api/ping`).catch(() => {});
   }, []);
 
   return (
