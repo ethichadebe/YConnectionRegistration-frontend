@@ -1,17 +1,6 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Search, Users, Calendar, Download } from "lucide-react";
 import * as XLSX from "xlsx";
 
 interface Registration {
@@ -30,6 +19,77 @@ interface Registration {
   emergencyName: string;
   emergencyPhone: string;
 }
+
+const CSS = `
+  :root {
+    --cream:#F5EDD6; --red:#C8001A; --rdk:#7A0010;
+    --gold:#F5B800; --ink:#0D0905;
+    --disp:'Bebas Neue',Impact,'Arial Black',sans-serif;
+    --body:'Libre Baskerville',Georgia,serif;
+    --mono:'Courier New',monospace;
+  }
+  .ad-grain {
+    position:fixed;inset:0;z-index:9997;pointer-events:none;
+    background-image:radial-gradient(circle,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-size:3px 3px;
+  }
+  .ad-btn {
+    position:relative;overflow:hidden;cursor:pointer;border:none;
+    font-family:var(--disp);letter-spacing:.1em;text-transform:uppercase;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    transition:box-shadow .15s;
+  }
+  .ad-btn::before {
+    content:'';position:absolute;top:50%;left:50%;
+    width:10px;height:10px;border-radius:50%;
+    background:rgba(0,0,0,.22);
+    transform:translate(-50%,-50%) scale(0);
+    transition:transform .6s cubic-bezier(.16,1,.3,1);
+  }
+  .ad-btn:hover::before { transform:translate(-50%,-50%) scale(32); }
+  .ad-btn-red {
+    background:var(--red);color:white;
+    padding:9px 18px;font-size:13px;
+    box-shadow:3px 3px 0 var(--rdk);
+  }
+  .ad-btn-red:hover { box-shadow:1px 1px 0 var(--rdk); }
+  .ad-btn-ghost {
+    background:rgba(245,237,214,.07);color:rgba(245,237,214,.6);
+    padding:9px 16px;font-size:12px;
+    border:1px solid rgba(245,237,214,.12);
+  }
+  .ad-btn-ghost:hover { background:rgba(245,237,214,.12); }
+  .ad-input {
+    background:rgba(255,255,255,.06);border:1.5px solid rgba(245,237,214,.12);
+    padding:9px 14px;font-family:var(--body);font-size:13px;
+    color:var(--cream);outline:none;width:100%;box-sizing:border-box;
+    transition:border-color .2s;
+  }
+  .ad-input:focus { border-color:var(--red); }
+  .ad-input::placeholder { color:rgba(245,237,214,.2); }
+  .ad-select {
+    background:rgba(255,255,255,.06);border:1.5px solid rgba(245,237,214,.12);
+    padding:9px 36px 9px 14px;font-family:var(--body);font-size:13px;
+    color:var(--cream);outline:none;width:100%;box-sizing:border-box;
+    appearance:none;-webkit-appearance:none;cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(245,237,214,.4)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;
+    transition:border-color .2s;
+  }
+  .ad-select:focus { border-color:var(--red); }
+  .ad-select option { background:#1a1008; color:var(--cream); }
+  .ad-card {
+    background:rgba(255,255,255,.04);border:1px solid rgba(245,237,214,.08);
+    border-left:3px solid transparent;
+    padding:18px;transition:border-left-color .2s,background .2s;cursor:pointer;
+  }
+  .ad-card:hover { border-left-color:var(--red);background:rgba(255,255,255,.07); }
+  @keyframes ad-fadeIn {
+    from { opacity:0;transform:translateY(12px); }
+    to   { opacity:1;transform:none; }
+  }
+  .ad-appear { animation:ad-fadeIn .4s ease both; }
+`;
 
 const AdminDashboard = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
@@ -143,201 +203,149 @@ const AdminDashboard = () => {
     }
   };
 
-  const RED = "hsl(var(--camp-red))";
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div style={{ borderBottom: "1px solid #f0f0f0" }}>
-        <div style={{ background: RED, height: "6px" }} />
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
-            <span style={{ fontWeight: 900, fontSize: "1.1rem", color: RED }}>Y-CON 2026</span>
-            <span className="text-muted-foreground text-sm ml-2">Admin Dashboard</span>
-          </div>
-          <Button variant="outline" size="sm" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" /> Logout
-          </Button>
-        </div>
-      </div>
+    <div style={{ background: "#0D0905", minHeight: "100vh", color: "#F5EDD6" }}>
+      <style>{CSS}</style>
+      <div className="ad-grain" aria-hidden="true" />
 
-      <div className="container mx-auto px-4 py-8">
+      {/* Nav */}
+      <nav style={{ borderBottom: "1px solid rgba(245,237,214,.08)", padding: "0 20px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <img src="/assets/salvation-army-logo.png" alt="The Salvation Army" style={{ height: 22, filter: "brightness(10)" }} />
+            <img src="/assets/red-logo.png" alt="red." style={{ height: 14, filter: "brightness(10)" }} />
+            <span style={{ width: 1, height: 20, background: "rgba(245,237,214,.15)", display: "inline-block", margin: "0 4px" }} />
+            <span style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 18, letterSpacing: ".12em", color: "#F5EDD6" }}>Y-CON 2026</span>
+            <span style={{ fontFamily: "'Courier New',monospace", fontSize: 9, letterSpacing: "3px", color: "rgba(200,0,26,.7)", textTransform: "uppercase" }}>// Admin</span>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button className="ad-btn ad-btn-ghost" onClick={exportAllToExcel} disabled={!registrations.length || isLoading}
+              style={{ opacity: (!registrations.length || isLoading) ? 0.4 : 1 }}>
+              ↓ Export XLSX
+            </button>
+            <button className="ad-btn ad-btn-red" onClick={handleLogout}>
+              Logout →
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px 60px" }}>
+
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <p className="text-muted-foreground">Loading registrations...</p>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 300, gap: 16 }}>
+            <div style={{ width: 40, height: 40, border: "3px solid rgba(245,237,214,.1)", borderTop: "3px solid #C8001A", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+            <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, letterSpacing: "3px", color: "rgba(245,237,214,.3)", textTransform: "uppercase" }}>Loading registrations...</p>
           </div>
         ) : (
           <>
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              {/* Total */}
-              <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}>
-                <div className="flex items-center gap-4">
-                  <div style={{ width: 44, height: 44, background: RED, borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Users className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{registrations.length}</p>
-                    <p className="text-xs text-muted-foreground">Total Registrations</p>
-                  </div>
-                </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 16, marginBottom: 32 }} className="ad-appear">
+              <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(245,237,214,.08)", borderLeft: "4px solid #C8001A", padding: "20px 22px" }}>
+                <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, letterSpacing: "3px", color: "rgba(245,237,214,.35)", textTransform: "uppercase", margin: "0 0 6px" }}>// Total Registered</p>
+                <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 52, color: "#F5EDD6", lineHeight: 1, margin: 0 }}>{registrations.length}</p>
               </div>
-
-              {/* Under 18 */}
-              <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}>
-                <div className="flex items-center gap-4">
-                  <div style={{ width: 44, height: 44, background: "#fff0f0", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", border: `1px solid ${RED}` }}>
-                    <Calendar style={{ width: 20, height: 20, color: RED }} />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">
-                      {registrations.filter(r => r.isUnder18).length}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Under 18</p>
-                  </div>
-                </div>
+              <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(245,237,214,.08)", borderLeft: "4px solid #F5B800", padding: "20px 22px" }}>
+                <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, letterSpacing: "3px", color: "rgba(245,237,214,.35)", textTransform: "uppercase", margin: "0 0 6px" }}>// Under 18</p>
+                <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 52, color: "#F5B800", lineHeight: 1, margin: 0 }}>{registrations.filter(r => r.isUnder18).length}</p>
               </div>
-
-              {/* Export */}
-              <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}>
-                <div className="flex items-center gap-4">
-                  <div style={{ width: 44, height: 44, background: "#f5f5f5", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Download className="w-5 h-5 text-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-foreground">Export</p>
-                    <p className="text-xs text-muted-foreground">Download all as Excel</p>
-                  </div>
-                  <Button size="sm" variant="outline" onClick={exportAllToExcel} disabled={!registrations.length}>
-                    <Download className="w-3 h-3 mr-1" /> Export
-                  </Button>
-                </div>
+              <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(245,237,214,.08)", borderLeft: "4px solid rgba(245,237,214,.3)", padding: "20px 22px" }}>
+                <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, letterSpacing: "3px", color: "rgba(245,237,214,.35)", textTransform: "uppercase", margin: "0 0 6px" }}>// Adults (18+)</p>
+                <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 52, color: "rgba(245,237,214,.7)", lineHeight: 1, margin: 0 }}>{registrations.filter(r => !r.isUnder18).length}</p>
               </div>
             </div>
 
             {/* Filters */}
-            <div style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px", marginBottom: "24px" }}>
-              <p className="text-sm font-semibold text-foreground mb-3">Filter Registrations</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by name, email, or corps..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Select value={ageFilter} onValueChange={setAgeFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by age" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Ages</SelectItem>
-                    <SelectItem value="under18">Under 18</SelectItem>
-                    <SelectItem value="over18">18 and Over</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={genderFilter} onValueChange={setGenderFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Filter by gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Genders</SelectItem>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div style={{ background: "rgba(255,255,255,.03)", border: "1px solid rgba(245,237,214,.07)", padding: "18px 20px", marginBottom: 24 }} className="ad-appear">
+              <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, letterSpacing: "3px", color: "#F5B800", textTransform: "uppercase", margin: "0 0 14px" }}>// Filter Registrations</p>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12 }}>
+                <input
+                  className="ad-input"
+                  type="text"
+                  placeholder="Search name, email, corps…"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                />
+                <select className="ad-select" value={ageFilter} onChange={e => setAgeFilter(e.target.value)}>
+                  <option value="all">All Ages</option>
+                  <option value="under18">Under 18</option>
+                  <option value="over18">18 and Over</option>
+                </select>
+                <select className="ad-select" value={genderFilter} onChange={e => setGenderFilter(e.target.value)}>
+                  <option value="all">All Genders</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground mb-4">
-              Showing {filteredRegistrations.length} of {registrations.length} registrations
+            <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, letterSpacing: "2px", color: "rgba(245,237,214,.25)", textTransform: "uppercase", margin: "0 0 16px" }}>
+              Showing {filteredRegistrations.length} of {registrations.length}
             </p>
 
-            {/* Registration cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredRegistrations.map((reg) => (
+            {/* Cards grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 16 }}>
+              {filteredRegistrations.map((reg, i) => (
                 <div
                   key={reg.id}
-                  style={{ border: "1px solid #e8e8e8", borderRadius: "12px", padding: "20px" }}
+                  className="ad-card ad-appear"
+                  style={{ animationDelay: `${Math.min(i * 0.04, 0.4)}s` }}
+                  onClick={() => navigate(`/admin/registration/${reg.id}`)}
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  {/* Card header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
                     <div>
-                      <h3 className="font-semibold text-foreground">
+                      <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 22, color: "#F5EDD6", letterSpacing: ".05em", margin: "0 0 2px", lineHeight: 1 }}>
                         {reg.firstName} {reg.lastName}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">Age: {calculateAge(reg.dateOfBirth)}</p>
+                      </p>
+                      <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(245,237,214,.35)", letterSpacing: "1px" }}>
+                        Age {calculateAge(reg.dateOfBirth)} · {reg.gender}
+                      </p>
                     </div>
-                    <div className="flex flex-col gap-1 items-end">
-                      <Badge
-                        style={reg.isUnder18
-                          ? { background: "#fff0f0", color: RED, border: `1px solid ${RED}`, fontSize: "0.65rem" }
-                          : { background: "#f5f5f5", color: "#555", fontSize: "0.65rem" }
-                        }
-                      >
-                        {reg.isUnder18 ? "Under 18" : "Adult"}
-                      </Badge>
-                      <Badge variant="outline" style={{ fontSize: "0.65rem" }}>
-                        {reg.gender}
-                      </Badge>
-                    </div>
+                    <span style={{
+                      fontFamily: "'Courier New',monospace", fontSize: 8, letterSpacing: "2px", textTransform: "uppercase",
+                      padding: "3px 8px",
+                      background: reg.isUnder18 ? "rgba(200,0,26,.18)" : "rgba(245,237,214,.07)",
+                      color: reg.isUnder18 ? "#C8001A" : "rgba(245,237,214,.4)",
+                      border: reg.isUnder18 ? "1px solid rgba(200,0,26,.3)" : "1px solid rgba(245,237,214,.1)",
+                    }}>
+                      {reg.isUnder18 ? "U18" : "Adult"}
+                    </span>
                   </div>
 
-                  <div className="space-y-1 text-sm">
-                    <div>
-                      <span className="text-xs font-medium" style={{ color: RED }}>Email</span>
-                      <p className="text-muted-foreground text-xs">{reg.email}</p>
-                    </div>
-                    <div>
-                      <span className="text-xs font-medium" style={{ color: RED }}>Phone</span>
-                      <p className="text-muted-foreground text-xs">{reg.phone}</p>
-                    </div>
-                    <div>
-                      <span className="text-xs font-medium" style={{ color: RED }}>Corps</span>
-                      <p className="text-muted-foreground text-xs">{reg.corpsName}</p>
-                    </div>
-                    {reg.isUnder18 && reg.guardianFirstName && (
-                      <div>
-                        <span className="text-xs font-medium" style={{ color: RED }}>Guardian</span>
-                        <p className="text-muted-foreground text-xs">{reg.guardianFirstName} {reg.guardianLastName}</p>
+                  {/* Details */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                    {[
+                      { l: "Email", v: reg.email },
+                      { l: "Corps", v: reg.corpsName },
+                      ...(reg.isUnder18 && reg.guardianFirstName ? [{ l: "Guardian", v: `${reg.guardianFirstName} ${reg.guardianLastName}` }] : []),
+                    ].map(({ l, v }) => (
+                      <div key={l} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+                        <span style={{ fontFamily: "'Courier New',monospace", fontSize: 8, letterSpacing: "2px", textTransform: "uppercase", color: "#F5B800", flexShrink: 0, minWidth: 46 }}>{l}</span>
+                        <span style={{ fontFamily: "'Libre Baskerville',Georgia,serif", fontSize: 12, color: "rgba(245,237,214,.65)", lineHeight: 1.4, wordBreak: "break-all" }}>{v}</span>
                       </div>
-                    )}
-                    <div>
-                      <span className="text-xs font-medium" style={{ color: RED }}>Emergency</span>
-                      <p className="text-muted-foreground text-xs">{reg.emergencyName} — {reg.emergencyPhone}</p>
-                    </div>
+                    ))}
                   </div>
 
-                  <div className="mt-4 pt-3 flex justify-between items-center" style={{ borderTop: "1px solid #f0f0f0" }}>
-                    <p className="text-xs text-muted-foreground">
+                  {/* Footer */}
+                  <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid rgba(245,237,214,.07)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontFamily: "'Courier New',monospace", fontSize: 8, color: "rgba(245,237,214,.2)", letterSpacing: "1px" }}>
                       {new Date(reg.registeredAt).toLocaleDateString()}
-                    </p>
-                    <button
-                      onClick={() => navigate(`/admin/registration/${reg.id}`)}
-                      style={{
-                        background: "none",
-                        border: "1px solid #e0e0e0",
-                        borderRadius: "6px",
-                        padding: "4px 12px",
-                        fontSize: "0.75rem",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        color: "#333",
-                      }}
-                    >
-                      View Details
-                    </button>
+                    </span>
+                    <span style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 12, letterSpacing: ".12em", color: "#C8001A" }}>
+                      View Details →
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
 
             {filteredRegistrations.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No registrations found</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {registrations.length === 0 ? "No one has registered yet." : "Try adjusting your filters."}
+              <div style={{ textAlign: "center", padding: "60px 20px" }}>
+                <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 32, color: "rgba(245,237,214,.15)", letterSpacing: ".1em" }}>NO RESULTS</p>
+                <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, color: "rgba(245,237,214,.2)", letterSpacing: "2px", textTransform: "uppercase", marginTop: 8 }}>
+                  {registrations.length === 0 ? "No registrations yet." : "Try adjusting your filters."}
                 </p>
               </div>
             )}
@@ -345,7 +353,12 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      <div style={{ background: RED, height: "6px" }} />
+      {/* Footer stripe */}
+      <div style={{ borderTop: "1px solid rgba(245,237,214,.06)", padding: "16px 20px", textAlign: "center" }}>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(245,237,214,.15)", letterSpacing: ".1em", textTransform: "uppercase", margin: 0 }}>
+          Y-CON 2026 · Central Division · Admin Portal
+        </p>
+      </div>
     </div>
   );
 };

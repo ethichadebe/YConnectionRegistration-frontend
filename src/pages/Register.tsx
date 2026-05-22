@@ -1,19 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ProgressIndicator } from "@/components/ProgressIndicator";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
-
-
 interface FormData {
-  // Personal Info
   firstName: string;
   lastName: string;
   email: string;
@@ -21,30 +11,149 @@ interface FormData {
   dateOfBirth: string;
   gender: string;
   corpsName: string;
-  
-  // Guardian Info (if under 18)
   guardianFirstName?: string;
   guardianLastName?: string;
   guardianEmail?: string;
   guardianPhone?: string;
   guardianRelationship?: string;
-  
-  // Emergency Contact
   emergencyName: string;
   emergencyPhone: string;
   emergencyRelationship: string;
-  
-  // Medical Info
   medicalConditions: string;
   medications: string;
   allergies: string;
-  
-  // Consent
   photoVideoConsent: string;
-  
-  // Agreement
   agreedToTerms: boolean;
 }
+
+const CSS = `
+  :root {
+    --cream: #F5EDD6; --red: #C8001A; --rdk: #7A0010;
+    --gold: #F5B800; --ink: #0D0905;
+    --disp: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
+    --body: 'Libre Baskerville', Georgia, serif;
+    --mono: 'Courier New', monospace;
+  }
+  .yr-grain {
+    position: fixed; inset: 0; z-index: 9997; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(0,0,0,.05) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+  .yr-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,9,5,.95);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--red);
+    padding: 10px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .yr-form-wrap { max-width: 580px; margin: 0 auto; padding: 0 20px 60px; }
+  .yr-progress { margin-bottom: 24px; }
+  .yr-steps-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .yr-step-dot { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .yr-step-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--disp); font-size: 13px; letter-spacing: 0; flex-shrink: 0;
+  }
+  .yr-step-circle.active  { background: var(--red);  color: white; }
+  .yr-step-circle.done    { background: var(--gold); color: var(--ink); }
+  .yr-step-circle.inactive { background: rgba(13,9,5,.1); color: rgba(13,9,5,.35); }
+  .yr-step-lbl {
+    font-family: var(--mono); font-size: 7px; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(13,9,5,.38); text-align: center;
+  }
+  .yr-pbar { height: 3px; background: rgba(13,9,5,.1); border-radius: 2px; }
+  .yr-pfill { height: 3px; background: var(--red); border-radius: 2px; transition: width .5s ease; }
+
+  .yr-card {
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(13,9,5,.1);
+    border-left: 4px solid var(--red);
+    padding: clamp(20px,4vw,32px) clamp(16px,4vw,28px);
+  }
+  .yr-card-head {
+    font-family: var(--disp); font-size: clamp(24px,4vw,38px);
+    color: var(--ink); letter-spacing: .03em; margin: 0 0 2px; line-height: 1;
+  }
+  .yr-card-sub {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 3px;
+    color: var(--red); text-transform: uppercase; margin: 0 0 22px;
+  }
+  .yr-label {
+    display: block; font-family: var(--mono); font-size: 9px;
+    letter-spacing: 2.5px; text-transform: uppercase;
+    color: rgba(13,9,5,.5); margin-bottom: 5px;
+  }
+  .yr-input {
+    display: block; width: 100%;
+    background: rgba(255,255,255,.8);
+    border: 1.5px solid rgba(13,9,5,.18);
+    padding: 10px 12px;
+    font-family: var(--body); font-size: 14px; color: var(--ink);
+    outline: none; transition: border-color .2s, background .2s;
+    border-radius: 0; -webkit-appearance: none; appearance: none;
+    box-sizing: border-box;
+  }
+  .yr-input:focus { border-color: var(--red); background: white; }
+  .yr-input.error { border-color: var(--red); background: rgba(200,0,26,.04); }
+  select.yr-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C8001A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    padding-right: 36px; cursor: pointer;
+  }
+  .yr-error {
+    font-family: var(--mono); font-size: 9px; color: var(--red);
+    margin-top: 4px; letter-spacing: 1px;
+  }
+  .yr-field { margin-top: 14px; }
+  .yr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  @media (max-width: 480px) { .yr-row { grid-template-columns: 1fr; } }
+  .yr-nav-btns {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 24px; padding-top: 20px;
+    border-top: 1px solid rgba(13,9,5,.1);
+  }
+  .yr-btn {
+    position: relative; overflow: hidden; cursor: pointer; border: none;
+    font-family: var(--disp); letter-spacing: .12em; text-transform: uppercase;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .yr-btn::before {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(0,0,0,.18);
+    transform: translate(-50%,-50%) scale(0);
+    transition: transform .65s cubic-bezier(.16,1,.3,1);
+  }
+  .yr-btn:hover::before { transform: translate(-50%,-50%) scale(32); }
+  .yr-btn-red {
+    background: var(--red); color: white;
+    padding: 12px 28px; font-size: 15px;
+    box-shadow: 4px 4px 0 var(--rdk);
+  }
+  .yr-btn-red:hover { box-shadow: 2px 2px 0 var(--rdk); }
+  .yr-btn-red:disabled { opacity: .5; cursor: not-allowed; }
+  .yr-btn-ghost {
+    background: transparent; color: rgba(13,9,5,.45);
+    border: 1.5px solid rgba(13,9,5,.18);
+    padding: 10px 20px; font-size: 14px;
+  }
+  .yr-btn-ghost:disabled { opacity: .25; cursor: not-allowed; }
+  .yr-radio-wrap { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; }
+  .yr-radio-lbl { font-family: var(--body); font-size: 14px; color: var(--ink); }
+  .yr-check-wrap { display: flex; align-items: flex-start; gap: 10px; }
+  .yr-review-box {
+    background: rgba(13,9,5,.05);
+    border-left: 3px solid var(--gold);
+    padding: 16px 18px; margin-bottom: 12px;
+  }
+  .yr-gold-box {
+    background: rgba(245,184,0,.1);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+  }
+`;
 
 const Register = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -53,574 +162,420 @@ const Register = () => {
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const { register, handleSubmit, formState: { errors }, watch, setValue, trigger } = useForm<FormData>();
-  
+
   const totalSteps = 6;
   const stepLabels = ["Personal", "Guardian", "Emergency", "Medical", "Consent", "Review"];
-  
   const dateOfBirth = watch("dateOfBirth");
-  
-  // Check if user is under 18
+
   const checkAge = (dob: string) => {
     if (!dob) return false;
     const today = new Date();
     const birthDate = new Date(dob);
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      return age - 1 < 18;
-    }
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) return age - 1 < 18;
     return age < 18;
   };
 
-  // SUBMIT HANDLER
   const onSubmit = async (data: FormData) => {
     if (currentStep !== totalSteps) return;
-  
     data.medicalConditions = data.medicalConditions?.trim() || "None";
     data.medications = data.medications?.trim() || "None";
     data.allergies = data.allergies?.trim() || "None";
-  
-    setIsSubmitting(true); // start loading
-  
+    setIsSubmitting(true);
     try {
       const response = await fetch("https://yconnectionregistration-backend.onrender.com/api/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-  
-      if (!response.ok) {
-        throw new Error("Failed to register");
-      }
-  
+      if (!response.ok) throw new Error("Failed to register");
       toast({ title: "Registration Successful!" });
       navigate("/confirmation");
     } catch (error) {
       console.error(error);
       toast({ title: "Something went wrong.", variant: "destructive" });
     } finally {
-      setIsSubmitting(false); // end loading
+      setIsSubmitting(false);
     }
   };
-      
+
   const nextStep = async () => {
     const formData = watch();
     let isValid = true;
     const newFieldErrors: Record<string, boolean> = {};
-    
-    // Trigger validation for visible fields
     let fieldsToValidate: Array<keyof FormData> = [];
-    
-    if (currentStep === 1) {
-      fieldsToValidate = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
-    } else if (currentStep === 2 && isUnder18) {
-      fieldsToValidate = ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'];
-    } else if (currentStep === 3) {
-      fieldsToValidate = ['emergencyName', 'emergencyPhone', 'emergencyRelationship'];
-    } else if (currentStep === 5) {
-      fieldsToValidate = ['photoVideoConsent', 'agreedToTerms'];
-    }
-    
+
+    if (currentStep === 1) fieldsToValidate = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
+    else if (currentStep === 2 && isUnder18) fieldsToValidate = ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'];
+    else if (currentStep === 3) fieldsToValidate = ['emergencyName', 'emergencyPhone', 'emergencyRelationship'];
+    else if (currentStep === 5) fieldsToValidate = ['photoVideoConsent', 'agreedToTerms'];
+
     const isStepValid = await trigger(fieldsToValidate as any);
-    
     if (!isStepValid) {
-      toast({
-        title: "Please fix the errors",
-        description: "Ensure all required fields are correctly filled.",
-        variant: "destructive",
-      });
+      toast({ title: "Please fix the errors", description: "Ensure all required fields are correctly filled.", variant: "destructive" });
       return;
     }
-      
-    // Validate current step before proceeding
+
     if (currentStep === 1) {
-      const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'];
-      requiredFields.forEach(field => {
-        if (!formData[field as keyof FormData]) {
-          newFieldErrors[field] = true;
-          isValid = false;
-        }
+      ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth', 'gender', 'corpsName'].forEach(f => {
+        if (!formData[f as keyof FormData]) { newFieldErrors[f] = true; isValid = false; }
       });
       if (isValid && dateOfBirth) {
         const under18 = checkAge(dateOfBirth);
         setIsUnder18(under18);
-  
-        // If over 18, auto-fill guardian fields with "n/a"
         if (!under18) {
-          setValue("guardianFirstName", "n/a");
-          setValue("guardianLastName", "n/a");
-          setValue("guardianEmail", "n/a");
-          setValue("guardianPhone", "n/a");
+          setValue("guardianFirstName", "n/a"); setValue("guardianLastName", "n/a");
+          setValue("guardianEmail", "n/a"); setValue("guardianPhone", "n/a");
           setValue("guardianRelationship", "n/a");
         }
       }
     }
-  
     if (currentStep === 2 && isUnder18) {
-      const requiredFields = ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'];
-      requiredFields.forEach(field => {
-        if (!formData[field as keyof FormData]) {
-          newFieldErrors[field] = true;
-          isValid = false;
-        }
+      ['guardianFirstName', 'guardianLastName', 'guardianEmail', 'guardianPhone', 'guardianRelationship'].forEach(f => {
+        if (!formData[f as keyof FormData]) { newFieldErrors[f] = true; isValid = false; }
       });
     }
-  
     if (currentStep === 3) {
-      const requiredFields = ['emergencyName', 'emergencyPhone', 'emergencyRelationship'];
-      requiredFields.forEach(field => {
-        if (!formData[field as keyof FormData]) {
-          newFieldErrors[field] = true;
-          isValid = false;
-        }
+      ['emergencyName', 'emergencyPhone', 'emergencyRelationship'].forEach(f => {
+        if (!formData[f as keyof FormData]) { newFieldErrors[f] = true; isValid = false; }
       });
     }
-  
     if (currentStep === 5) {
-      if (!formData.photoVideoConsent) {
-        newFieldErrors.photoVideoConsent = true;
-        isValid = false;
-      }
-      if (!formData.agreedToTerms) {
-        newFieldErrors.agreedToTerms = true;
-        isValid = false;
-      }
+      if (!formData.photoVideoConsent) { newFieldErrors.photoVideoConsent = true; isValid = false; }
+      if (!formData.agreedToTerms) { newFieldErrors.agreedToTerms = true; isValid = false; }
     }
-    
-  
-    if (currentStep === 6) {
-      if (!formData.agreedToTerms) {
-        newFieldErrors.agreedToTerms = true;
-        isValid = false;
-      }
-    }
-  
+    if (currentStep === 6 && !formData.agreedToTerms) { newFieldErrors.agreedToTerms = true; isValid = false; }
+
     setFieldErrors(newFieldErrors);
-  
     if (!isValid) {
-      toast({
-        title: "Please fill all required fields",
-        description: "Complete all mandatory fields before proceeding.",
-        variant: "destructive"
-      });
+      toast({ title: "Please fill all required fields", description: "Complete all mandatory fields before proceeding.", variant: "destructive" });
       return;
     }
-  
-    // Clear errors if validation passes
+
     setFieldErrors({});
-  
-    // Skip guardian step if over 18
-    if (currentStep === 1 && !checkAge(dateOfBirth)) {
-      setCurrentStep(3);
-    } else if (currentStep === 2 && !isUnder18) {
-      setCurrentStep(3);
-    } else {
-      setCurrentStep(Math.min(currentStep + 1, totalSteps));
-    }
+    if (currentStep === 1 && !checkAge(dateOfBirth)) setCurrentStep(3);
+    else if (currentStep === 2 && !isUnder18) setCurrentStep(3);
+    else setCurrentStep(Math.min(currentStep + 1, totalSteps));
   };
-  
+
   const prevStep = () => {
-    // Skip guardian step if over 18
-    if (currentStep === 3 && !isUnder18) {
-      setCurrentStep(1);
-    } else {
-      setCurrentStep(Math.max(currentStep - 1, 1));
-    }
+    if (currentStep === 3 && !isUnder18) setCurrentStep(1);
+    else setCurrentStep(Math.max(currentStep - 1, 1));
   };
+
+  const progressPct = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
   return (
-    <div className="min-h-screen bg-white">
-      <div style={{ background: "hsl(var(--camp-red))", height: "6px" }} />
-      <div className="container mx-auto px-4 max-w-2xl py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-1" style={{ color: "hsl(var(--camp-red))" }}>
-            Y-CON 2026
-          </h1>
-          <p className="text-sm font-semibold tracking-widest text-muted-foreground mb-1">REGISTRATION</p>
-          <p className="text-muted-foreground text-sm">Join us for a divine encounter!</p>
+    <div style={{ background: "var(--cream,#F5EDD6)", minHeight: "100vh" }}>
+      <style>{CSS}</style>
+      <div className="yr-grain" aria-hidden="true" />
+
+      {/* ── NAV ── */}
+      <nav className="yr-nav">
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <img src="/assets/salvation-army-logo.png" alt="The Salvation Army" style={{ height: 26 }} />
+          <img src="/assets/red-logo.png" alt="red." style={{ height: 15, filter: "brightness(10)" }} />
+        </div>
+        <span style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", color: "rgba(255,255,255,.55)", fontSize: 14, letterSpacing: ".2em" }}>
+          REGISTRATION
+        </span>
+        <button onClick={() => navigate("/")}
+          style={{ fontFamily: "'Courier New', monospace", color: "rgba(255,255,255,.32)", fontSize: 10, letterSpacing: ".12em", background: "none", border: "none", cursor: "pointer", textTransform: "uppercase" }}>
+          ← Home
+        </button>
+      </nav>
+
+      <div className="yr-form-wrap">
+        {/* Y-CON logo header */}
+        <div style={{ textAlign: "center", padding: "24px 0 16px" }}>
+          <img src="/assets/ycon-logo.png" alt="Y-CON 2026"
+            style={{ width: "clamp(140px,36vw,240px)", mixBlendMode: "multiply" }} />
         </div>
 
-        <ProgressIndicator 
-          currentStep={currentStep} 
-          totalSteps={totalSteps} 
-          stepLabels={stepLabels}
-        />
-
-        <form className="bg-card rounded-2xl p-8 shadow-lg">
-          {/* Step 1: Personal Information */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">Personal Information</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">First Name *</Label>
-                  <Input 
-                    id="firstName"
-                    className={`form-input ${fieldErrors.firstName ? 'error' : ''}`}
-                    {...register("firstName", { required: "First name is required" })}
-                  />
-                  {errors.firstName && <p className="text-destructive text-sm mt-1">{errors.firstName.message}</p>}
+        {/* ── PROGRESS ── */}
+        <div className="yr-progress">
+          <div className="yr-steps-row">
+            {stepLabels.map((label, i) => {
+              const n = i + 1;
+              const cls = n === currentStep ? "active" : n < currentStep ? "done" : "inactive";
+              return (
+                <div key={n} className="yr-step-dot">
+                  <div className={`yr-step-circle ${cls}`}>
+                    {n < currentStep ? "✓" : n}
+                  </div>
+                  <span className="yr-step-lbl">{label}</span>
                 </div>
-                
-                <div>
-                  <Label htmlFor="lastName">Last Name *</Label>
-                  <Input 
-                    id="lastName"
-                    className={`form-input ${fieldErrors.lastName ? 'error' : ''}`}
-                    {...register("lastName", { required: "Last name is required" })}
-                  />
-                  {errors.lastName && <p className="text-destructive text-sm mt-1">{errors.lastName.message}</p>}
-                </div>
-              </div>
+              );
+            })}
+          </div>
+          <div className="yr-pbar">
+            <div className="yr-pfill" style={{ width: `${progressPct}%` }} />
+          </div>
+        </div>
 
+        {/* ── FORM CARD ── */}
+        <form>
+          <div className="yr-card">
+
+            {/* STEP 1 — Personal */}
+            {currentStep === 1 && (
               <div>
-                <Label htmlFor="email">Email Address *</Label>
-                <Input 
-                  id="email"
-                  type="email"
-                  className={`form-input ${fieldErrors.email ? 'error' : ''}`}
-                  {...register("email", { 
-                    required: "Email is required",
-                    pattern: { 
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
-                      message: "Enter a valid email address (e.g. name@example.com)" 
-                    }
-                  })}
-                />
-                {errors.email && (
-                  <p className="text-destructive text-sm mt-1">{errors.email.message}</p>
-                )}
-              </div>
+                <h2 className="yr-card-head">Personal Information</h2>
+                <p className="yr-card-sub">// Step 1 of {totalSteps}</p>
 
-              <div>
-                <Label htmlFor="phone">Phone Number *</Label>
-                <Input 
-                  id="phone"
-                  type="tel"
-                  className={`form-input ${fieldErrors.phone ? 'error' : ''}`}
-                  {...register("phone", { 
-                    required: "Phone number is required",
-                    pattern: {
-                      value: /^\d{10}$/,
-                      message: "Phone number must be exactly 10 digits"
-                    }
-                  })}
-                />
-                {errors.phone && <p className="text-destructive text-sm mt-1">{errors.phone.message}</p>}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth *</Label>
-                  <Input 
-                    id="dateOfBirth"
-                    type="date"
-                    className={`form-input ${fieldErrors.dateOfBirth ? 'error' : ''}`}
-                    {...register("dateOfBirth", { required: "Date of birth is required" })}
-                  />
-                  {errors.dateOfBirth && <p className="text-destructive text-sm mt-1">{errors.dateOfBirth.message}</p>}
+                <div className="yr-row" style={{ marginTop: 0 }}>
+                  <div>
+                    <label className="yr-label">First Name *</label>
+                    <input className={`yr-input${fieldErrors.firstName ? " error" : ""}`}
+                      {...register("firstName", { required: "First name is required" })} />
+                    {errors.firstName && <p className="yr-error">{errors.firstName.message}</p>}
+                  </div>
+                  <div>
+                    <label className="yr-label">Last Name *</label>
+                    <input className={`yr-input${fieldErrors.lastName ? " error" : ""}`}
+                      {...register("lastName", { required: "Last name is required" })} />
+                    {errors.lastName && <p className="yr-error">{errors.lastName.message}</p>}
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="gender">Gender *</Label>
-                  <Select onValueChange={(value) => setValue("gender", value)}>
-                    <SelectTrigger className={`form-input ${fieldErrors.gender ? 'error' : ''}`}>
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.gender && <p className="text-destructive text-sm mt-1">Gender is required</p>}
-                  <input 
-                    type="hidden" 
-                    {...register("gender", { required: "Gender is required" })} 
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="corpsName">Corps/Church Name *</Label>
-                <Input 
-                  id="corpsName"
-                  className={`form-input ${fieldErrors.corpsName ? 'error' : ''}`}
-                  {...register("corpsName", { required: "Corps name is required" })}
-                />
-                {errors.corpsName && <p className="text-destructive text-sm mt-1">{errors.corpsName.message}</p>}
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Guardian Information (only if under 18) */}
-          {currentStep === 2 && isUnder18 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">Guardian Information</h2>
-              <p className="text-muted-foreground mb-6">Since you're under 18, we need your guardian's information.</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="guardianFirstName">Guardian First Name *</Label>
-                  <Input 
-                    id="guardianFirstName"
-                    className={`form-input ${fieldErrors.guardianFirstName ? 'error' : ''}`}
-                    {...register("guardianFirstName", { required: isUnder18 ? "Guardian first name is required" : false })}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="guardianLastName">Guardian Last Name *</Label>
-                  <Input 
-                    id="guardianLastName"
-                    className={`form-input ${fieldErrors.guardianLastName ? 'error' : ''}`}
-                    {...register("guardianLastName", { required: isUnder18 ? "Guardian last name is required" : false })}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="guardianEmail">Guardian Email *</Label>
-                <Input 
-                  id="guardianEmail"
-                  type="email"
-                  className={`form-input ${fieldErrors.guardianEmail ? 'error' : ''}`}
-                  {...register("guardianEmail", { 
-                    required: isUnder18 ? "Guardian email is required" : false,
-                    pattern: { value: /^\S+@\S+$/, message: "Invalid email address" }
-                  })}
-                />
-                {errors.guardianEmail && (
-                  <p className="text-destructive text-sm mt-1">{errors.guardianEmail.message}</p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="guardianPhone">Guardian Phone *</Label>
-                  <Input 
-                    id="guardianPhone"
-                    type="tel"
-                    className={`form-input ${fieldErrors.guardianPhone ? 'error' : ''}`}
-                    {...register("guardianPhone", { 
-                      required: isUnder18 ? "Guardian phone is required" : false,
-                      pattern: {
-                        value: /^\d{10}$/,
-                        message: "Phone number must be exactly 10 digits"
-                      }
-                    })}
-                  />
-                  {errors.guardianPhone && (
-                    <p className="text-destructive text-sm mt-1">{errors.guardianPhone.message}</p>
-                  )}
+                <div className="yr-field">
+                  <label className="yr-label">Email Address *</label>
+                  <input type="email" className={`yr-input${fieldErrors.email ? " error" : ""}`}
+                    {...register("email", { required: "Email is required", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Enter a valid email address" } })} />
+                  {errors.email && <p className="yr-error">{errors.email.message}</p>}
                 </div>
 
-                <div>
-                  <Label htmlFor="guardianRelationship">Relationship *</Label>
-                  <Select onValueChange={(value) => setValue("guardianRelationship", value)}>
-                    <SelectTrigger className={`form-input ${fieldErrors.guardianRelationship ? 'error' : ''}`}>
-                      <SelectValue placeholder="Select relationship" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="parent">Parent</SelectItem>
-                      <SelectItem value="guardian">Legal Guardian</SelectItem>
-                      <SelectItem value="grandparent">Grandparent</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.guardianRelationship && <p className="text-destructive text-sm mt-1">Relationship is required</p>}
-                  <input 
-                    type="hidden" 
-                    {...register("guardianRelationship", { required: isUnder18 ? "Relationship is required" : false })} 
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Emergency Contact */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">Emergency Contact</h2>
-              
-              <div>
-                <Label htmlFor="emergencyName">Emergency Contact Name *</Label>
-                <Input 
-                  id="emergencyName"
-                  className={`form-input ${fieldErrors.emergencyName ? 'error' : ''}`}
-                  {...register("emergencyName", { required: "Emergency contact name is required" })}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="emergencyPhone">Emergency Phone *</Label>
-                  <Input 
-                    id="emergencyPhone"
-                    type="tel"
-                    className={`form-input ${fieldErrors.emergencyPhone ? 'error' : ''}`}
-                    {...register("emergencyPhone", { 
-                      required: "Emergency phone is required",
-                      pattern: { value: /^\d{10}$/, message: "Phone number must be 10 digits" }
-                    })}
-                  />
-                  {errors.emergencyPhone && <p className="text-destructive text-sm mt-1">{errors.emergencyPhone.message}</p>}
+                <div className="yr-field">
+                  <label className="yr-label">Phone Number *</label>
+                  <input type="tel" className={`yr-input${fieldErrors.phone ? " error" : ""}`}
+                    {...register("phone", { required: "Phone number is required", pattern: { value: /^\d{10}$/, message: "Must be exactly 10 digits" } })} />
+                  {errors.phone && <p className="yr-error">{errors.phone.message}</p>}
                 </div>
 
-                <div>
-                  <Label htmlFor="emergencyRelationship">Relationship *</Label>
-                  <Input 
-                    id="emergencyRelationship"
-                    className={`form-input ${fieldErrors.emergencyRelationship ? 'error' : ''}`}
-                    {...register("emergencyRelationship", { required: "Emergency relationship is required" })}
-                  />
+                <div className="yr-row">
+                  <div>
+                    <label className="yr-label">Date of Birth *</label>
+                    <input type="date" className={`yr-input${fieldErrors.dateOfBirth ? " error" : ""}`}
+                      {...register("dateOfBirth", { required: "Date of birth is required" })} />
+                    {errors.dateOfBirth && <p className="yr-error">{errors.dateOfBirth.message}</p>}
+                  </div>
+                  <div>
+                    <label className="yr-label">Gender *</label>
+                    <select className={`yr-input${fieldErrors.gender ? " error" : ""}`}
+                      {...register("gender", { required: "Gender is required" })}>
+                      <option value="">Select gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                    {errors.gender && <p className="yr-error">{errors.gender.message}</p>}
+                  </div>
+                </div>
+
+                <div className="yr-field">
+                  <label className="yr-label">Corps / Church Name *</label>
+                  <input className={`yr-input${fieldErrors.corpsName ? " error" : ""}`}
+                    {...register("corpsName", { required: "Corps name is required" })} />
+                  {errors.corpsName && <p className="yr-error">{errors.corpsName.message}</p>}
                 </div>
               </div>
-            </div>
-          )}
-
-          {currentStep === 4 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">Medical Information</h2>
-              
-              <div>
-                <Label htmlFor="medicalConditions">Medical Conditions</Label>
-                <Input 
-                  id="medicalConditions"
-                  className="form-input"
-                  placeholder="List any medical conditions (or 'None')"
-                  {...register("medicalConditions")}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="medications">Current Medications</Label>
-                <Input 
-                  id="medications"
-                  className="form-input"
-                  placeholder="List current medications (or 'None')"
-                  {...register("medications")}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="allergies">Allergies</Label>
-                <Input 
-                  id="allergies"
-                  className="form-input"
-                  placeholder="List any allergies (or 'None')"
-                  {...register("allergies")}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 5: Consent */}
-          {currentStep === 5 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">Consent & Permissions</h2>
-              
-              <div>
-                <Label className="text-base font-medium">Do you give permission for photos/videos of you to be used for promotional purposes? *</Label>
-                <div className="mt-3 space-y-2">
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="yes"
-                      {...register("photoVideoConsent", { required: "Photo/video consent is required" })}
-                      className="w-4 h-4 text-camp-red focus:ring-camp-red"
-                    />
-                    <span>Yes</span>
-                  </label>
-                  <label className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="no"
-                      {...register("photoVideoConsent", { required: "Photo/video consent is required" })}
-                      className="w-4 h-4 text-camp-red focus:ring-camp-red"
-                    />
-                    <span>No</span>
-                  </label>
-                </div>
-                {fieldErrors.photoVideoConsent && <p className="text-destructive text-sm mt-1">Please select an option</p>}
-              </div>
-
-              <div className="flex items-start space-x-2">
-                <Checkbox 
-                  id="infoConfirm"
-                  {...register("agreedToTerms", { required: "You must confirm the information and agree to camp rules" })}
-                />
-                <Label htmlFor="infoConfirm" className="text-sm leading-relaxed">
-                  I confirm that the above information is true and I agree to abide by the camp rules and guidelines *
-                </Label>
-              </div>
-              {fieldErrors.agreedToTerms && <p className="text-destructive text-sm">You must confirm this to proceed</p>}
-            </div>
-          )}
-
-          {/* Step 6: Review & Submit */}
-          {currentStep === 6 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground mb-6">Review & Submit</h2>
-              
-              <div className="bg-muted rounded-lg p-6 space-y-4">
-                <h3 className="font-semibold text-lg">Registration Summary</h3>
-                <p className="text-sm text-muted-foreground">
-                  Please review your information before submitting. You'll receive a confirmation email after registration.
-                </p>
-              </div>
-
-              <div className="bg-muted rounded-lg p-4">
-                <p className="text-sm text-muted-foreground">
-                  By submitting this form, you confirm that all information provided is accurate and complete.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-border">
-            <Button 
-              type="button"
-              variant="outline" 
-              onClick={prevStep}
-              disabled={currentStep === 1}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-
-            {currentStep < totalSteps ? (
-              <Button 
-                type="button"
-                variant="camp" 
-                onClick={nextStep}
-                className="flex items-center gap-2"
-              >
-                Next
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            ) : (
-              <Button 
-                type="button"
-                variant="hero"
-                onClick={handleSubmit(onSubmit)}
-                className="flex items-center gap-2"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Submitting..." : "Submit Registration"}
-              </Button>
             )}
+
+            {/* STEP 2 — Guardian */}
+            {currentStep === 2 && isUnder18 && (
+              <div>
+                <h2 className="yr-card-head">Guardian Information</h2>
+                <p className="yr-card-sub">// Under 18 — guardian details required</p>
+
+                <div className="yr-row" style={{ marginTop: 0 }}>
+                  <div>
+                    <label className="yr-label">Guardian First Name *</label>
+                    <input className={`yr-input${fieldErrors.guardianFirstName ? " error" : ""}`}
+                      {...register("guardianFirstName", { required: isUnder18 ? "Required" : false })} />
+                  </div>
+                  <div>
+                    <label className="yr-label">Guardian Last Name *</label>
+                    <input className={`yr-input${fieldErrors.guardianLastName ? " error" : ""}`}
+                      {...register("guardianLastName", { required: isUnder18 ? "Required" : false })} />
+                  </div>
+                </div>
+
+                <div className="yr-field">
+                  <label className="yr-label">Guardian Email *</label>
+                  <input type="email" className={`yr-input${fieldErrors.guardianEmail ? " error" : ""}`}
+                    {...register("guardianEmail", { required: isUnder18 ? "Required" : false, pattern: { value: /^\S+@\S+$/, message: "Invalid email" } })} />
+                  {errors.guardianEmail && <p className="yr-error">{errors.guardianEmail.message}</p>}
+                </div>
+
+                <div className="yr-row">
+                  <div>
+                    <label className="yr-label">Guardian Phone *</label>
+                    <input type="tel" className={`yr-input${fieldErrors.guardianPhone ? " error" : ""}`}
+                      {...register("guardianPhone", { required: isUnder18 ? "Required" : false, pattern: { value: /^\d{10}$/, message: "10 digits" } })} />
+                    {errors.guardianPhone && <p className="yr-error">{errors.guardianPhone.message}</p>}
+                  </div>
+                  <div>
+                    <label className="yr-label">Relationship *</label>
+                    <select className={`yr-input${fieldErrors.guardianRelationship ? " error" : ""}`}
+                      {...register("guardianRelationship", { required: isUnder18 ? "Required" : false })}>
+                      <option value="">Select relationship</option>
+                      <option value="parent">Parent</option>
+                      <option value="guardian">Legal Guardian</option>
+                      <option value="grandparent">Grandparent</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3 — Emergency Contact */}
+            {currentStep === 3 && (
+              <div>
+                <h2 className="yr-card-head">Emergency Contact</h2>
+                <p className="yr-card-sub">// Step 3 of {totalSteps}</p>
+
+                <div>
+                  <label className="yr-label">Contact Name *</label>
+                  <input className={`yr-input${fieldErrors.emergencyName ? " error" : ""}`}
+                    {...register("emergencyName", { required: "Emergency contact name is required" })} />
+                </div>
+
+                <div className="yr-row">
+                  <div>
+                    <label className="yr-label">Phone *</label>
+                    <input type="tel" className={`yr-input${fieldErrors.emergencyPhone ? " error" : ""}`}
+                      {...register("emergencyPhone", { required: "Phone is required", pattern: { value: /^\d{10}$/, message: "Must be 10 digits" } })} />
+                    {errors.emergencyPhone && <p className="yr-error">{errors.emergencyPhone.message}</p>}
+                  </div>
+                  <div>
+                    <label className="yr-label">Relationship *</label>
+                    <input className={`yr-input${fieldErrors.emergencyRelationship ? " error" : ""}`}
+                      {...register("emergencyRelationship", { required: "Relationship is required" })} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4 — Medical */}
+            {currentStep === 4 && (
+              <div>
+                <h2 className="yr-card-head">Medical Information</h2>
+                <p className="yr-card-sub">// Step 4 of {totalSteps} — optional</p>
+
+                <div>
+                  <label className="yr-label">Medical Conditions</label>
+                  <input className="yr-input" placeholder="None" {...register("medicalConditions")} />
+                </div>
+                <div className="yr-field">
+                  <label className="yr-label">Current Medications</label>
+                  <input className="yr-input" placeholder="None" {...register("medications")} />
+                </div>
+                <div className="yr-field">
+                  <label className="yr-label">Allergies</label>
+                  <input className="yr-input" placeholder="None" {...register("allergies")} />
+                </div>
+              </div>
+            )}
+
+            {/* STEP 5 — Consent */}
+            {currentStep === 5 && (
+              <div>
+                <h2 className="yr-card-head">Consent & Permissions</h2>
+                <p className="yr-card-sub">// Step 5 of {totalSteps}</p>
+
+                <div>
+                  <label className="yr-label">Photo / Video Consent *</label>
+                  <p style={{ fontFamily: "var(--body,'Libre Baskerville',Georgia,serif)", fontSize: 13, color: "rgba(13,9,5,.65)", margin: "8px 0 10px", lineHeight: 1.6 }}>
+                    Do you give permission for photos/videos of you to be used for promotional purposes?
+                  </p>
+                  <div className="yr-radio-wrap">
+                    <input type="radio" value="yes" style={{ accentColor: "#C8001A", width: 16, height: 16 }}
+                      {...register("photoVideoConsent", { required: "Please select an option" })} />
+                    <span className="yr-radio-lbl">Yes</span>
+                  </div>
+                  <div className="yr-radio-wrap">
+                    <input type="radio" value="no" style={{ accentColor: "#C8001A", width: 16, height: 16 }}
+                      {...register("photoVideoConsent", { required: "Please select an option" })} />
+                    <span className="yr-radio-lbl">No</span>
+                  </div>
+                  {fieldErrors.photoVideoConsent && <p className="yr-error">Please select an option</p>}
+                </div>
+
+                <div className="yr-check-wrap" style={{ marginTop: 20 }}>
+                  <input type="checkbox" style={{ width: 16, height: 16, accentColor: "#C8001A", marginTop: 2, flexShrink: 0, cursor: "pointer" }}
+                    {...register("agreedToTerms", { required: "You must confirm this to proceed" })} />
+                  <label style={{ fontFamily: "var(--body,'Libre Baskerville',Georgia,serif)", fontSize: 13, color: "rgba(13,9,5,.8)", lineHeight: 1.55, cursor: "pointer" }}>
+                    I confirm that the above information is true and I agree to abide by the camp rules and guidelines *
+                  </label>
+                </div>
+                {fieldErrors.agreedToTerms && <p className="yr-error">You must confirm this to proceed</p>}
+              </div>
+            )}
+
+            {/* STEP 6 — Review */}
+            {currentStep === 6 && (
+              <div>
+                <h2 className="yr-card-head">Review & Submit</h2>
+                <p className="yr-card-sub">// Final step</p>
+
+                <div className="yr-review-box">
+                  <p style={{ fontFamily: "var(--disp,'Bebas Neue',Impact,sans-serif)", fontSize: 18, color: "#0D0905", letterSpacing: ".03em", margin: "0 0 6px" }}>Registration Summary</p>
+                  <p style={{ fontFamily: "var(--body,'Libre Baskerville',Georgia,serif)", fontSize: 13, color: "rgba(13,9,5,.55)", margin: 0, lineHeight: 1.6 }}>
+                    Please review your information before submitting. You'll receive a confirmation email after registration.
+                  </p>
+                </div>
+
+                <div className="yr-gold-box" style={{ marginTop: 12 }}>
+                  <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(13,9,5,.55)", margin: 0, letterSpacing: "1.5px", lineHeight: 1.7, textTransform: "uppercase" }}>
+                    By submitting, you confirm that all information provided is accurate and complete.
+                  </p>
+                </div>
+
+                {/* Quick summary */}
+                <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {[
+                    { lbl: "DATE",  val: "3–5 July 2026"     },
+                    { lbl: "VENUE", val: "Mighty Apies"       },
+                    { lbl: "FEE",   val: "R550 per person"    },
+                  ].map(({ lbl, val }) => (
+                    <div key={lbl} style={{ flex: 1, minWidth: 100, background: "#C8001A", padding: "10px 14px" }}>
+                      <div style={{ fontFamily: "'Courier New',monospace", fontSize: 7, letterSpacing: "3px", color: "rgba(255,255,255,.55)", textTransform: "uppercase", marginBottom: 3 }}>{lbl}</div>
+                      <div style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 16, color: "white", letterSpacing: ".04em" }}>{val}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── NAV BUTTONS ── */}
+            <div className="yr-nav-btns">
+              <button type="button" className="yr-btn yr-btn-ghost" onClick={prevStep} disabled={currentStep === 1}>
+                ← Back
+              </button>
+              {currentStep < totalSteps ? (
+                <button type="button" className="yr-btn yr-btn-red" onClick={nextStep}>
+                  Next →
+                </button>
+              ) : (
+                <button type="button" className="yr-btn yr-btn-red" onClick={handleSubmit(onSubmit)}
+                  disabled={isSubmitting} style={{ minWidth: 180 }}>
+                  {isSubmitting ? "Submitting…" : "Submit Registration"}
+                </button>
+              )}
+            </div>
           </div>
         </form>
+
+        {/* Footer */}
+        <div style={{ textAlign: "center", marginTop: 32, borderTop: "1px solid rgba(13,9,5,.08)", paddingTop: 16 }}>
+          <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(13,9,5,.28)", letterSpacing: ".1em", textTransform: "uppercase", margin: 0 }}>
+            © 2026 The Salvation Army · Central Division · Y‑CON 2026
+          </p>
+        </div>
       </div>
-      <div style={{ background: "hsl(var(--camp-red))", height: "6px", marginTop: "2rem" }} />
     </div>
   );
 };

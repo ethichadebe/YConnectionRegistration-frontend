@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Phone, Mail, Calendar, Shield, Heart, FileText, Camera, Loader2 } from "lucide-react";
 
 interface Registration {
   id: string;
@@ -30,20 +27,68 @@ interface Registration {
   agreedToTerms: boolean;
 }
 
-const SECTION_CARD: React.CSSProperties = {
-  border: "1px solid #e8e8e8",
-  borderRadius: "12px",
-  padding: "20px",
-};
-
-const LABEL_STYLE: React.CSSProperties = {
-  fontSize: "0.7rem",
-  fontWeight: 700,
-  color: "hsl(var(--camp-red))",
-  letterSpacing: "0.08em",
-  display: "block",
-  marginBottom: "2px",
-};
+const CSS = `
+  :root {
+    --cream:#F5EDD6; --red:#C8001A; --rdk:#7A0010;
+    --gold:#F5B800; --ink:#0D0905;
+    --disp:'Bebas Neue',Impact,'Arial Black',sans-serif;
+    --body:'Libre Baskerville',Georgia,serif;
+    --mono:'Courier New',monospace;
+  }
+  .rd-grain {
+    position:fixed;inset:0;z-index:9997;pointer-events:none;
+    background-image:radial-gradient(circle,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-size:3px 3px;
+  }
+  .rd-card {
+    background:rgba(255,255,255,.04);border:1px solid rgba(245,237,214,.08);
+    border-left:3px solid rgba(245,237,214,.12);
+    padding:22px 24px;margin-bottom:16px;
+  }
+  .rd-card-red { border-left-color:#C8001A; }
+  .rd-card-gold { border-left-color:#F5B800; }
+  .rd-label {
+    font-family:'Courier New',monospace;font-size:8px;letter-spacing:3px;
+    text-transform:uppercase;color:#F5B800;display:block;margin-bottom:3px;
+  }
+  .rd-value {
+    font-family:'Libre Baskerville',Georgia,serif;font-size:13px;
+    color:rgba(245,237,214,.75);line-height:1.5;
+  }
+  .rd-section-title {
+    font-family:'Courier New',monospace;font-size:8px;letter-spacing:3px;
+    text-transform:uppercase;color:rgba(245,237,214,.4);margin:0 0 18px;
+  }
+  .rd-btn {
+    position:relative;overflow:hidden;cursor:pointer;border:none;
+    font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.1em;text-transform:uppercase;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    transition:box-shadow .15s;
+  }
+  .rd-btn::before {
+    content:'';position:absolute;top:50%;left:50%;
+    width:10px;height:10px;border-radius:50%;background:rgba(0,0,0,.22);
+    transform:translate(-50%,-50%) scale(0);
+    transition:transform .6s cubic-bezier(.16,1,.3,1);
+  }
+  .rd-btn:hover::before { transform:translate(-50%,-50%) scale(32); }
+  .rd-btn-ghost {
+    background:rgba(245,237,214,.07);color:rgba(245,237,214,.6);
+    padding:9px 16px;font-size:13px;border:1px solid rgba(245,237,214,.12);
+  }
+  .rd-btn-ghost:hover { background:rgba(245,237,214,.12); }
+  .rd-btn-action {
+    background:rgba(200,0,26,.15);color:#C8001A;
+    padding:10px 18px;font-size:13px;border:1px solid rgba(200,0,26,.3);
+    width:100%;
+  }
+  .rd-btn-action:hover { background:rgba(200,0,26,.25); }
+  @keyframes rd-fadeIn {
+    from { opacity:0;transform:translateY(14px); }
+    to   { opacity:1;transform:none; }
+  }
+  .rd-appear { animation:rd-fadeIn .4s ease both; }
+`;
 
 const RegistrationDetails = () => {
   const { id } = useParams();
@@ -75,194 +120,214 @@ const RegistrationDetails = () => {
     return age;
   };
 
-  const RED = "hsl(var(--camp-red))";
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <Loader2 style={{ width: 32, height: 32, color: RED }} className="animate-spin" />
+      <div style={{ background: "#0D0905", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+        <style>{CSS}</style>
+        <div className="rd-grain" aria-hidden="true" />
+        <div style={{ width: 40, height: 40, border: "3px solid rgba(245,237,214,.1)", borderTop: "3px solid #C8001A", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, letterSpacing: "3px", color: "rgba(245,237,214,.3)", textTransform: "uppercase" }}>Loading…</p>
       </div>
     );
   }
 
   if (!registration) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-foreground mb-2">Registration Not Found</h2>
-          <p className="text-muted-foreground text-sm mb-4">The requested registration could not be found.</p>
-          <Button onClick={() => navigate("/admin/dashboard")} variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
-          </Button>
-        </div>
+      <div style={{ background: "#0D0905", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
+        <style>{CSS}</style>
+        <div className="rd-grain" aria-hidden="true" />
+        <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 32, color: "rgba(245,237,214,.2)", letterSpacing: ".1em" }}>NOT FOUND</p>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 10, color: "rgba(245,237,214,.25)", letterSpacing: "2px", textTransform: "uppercase" }}>Registration could not be found.</p>
+        <button className="rd-btn rd-btn-ghost" onClick={() => navigate("/admin/dashboard")}>← Back to Dashboard</button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div style={{ borderBottom: "1px solid #f0f0f0" }}>
-        <div style={{ background: RED, height: "6px" }} />
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => navigate("/admin/dashboard")}>
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </Button>
+    <div style={{ background: "#0D0905", minHeight: "100vh", color: "#F5EDD6" }}>
+      <style>{CSS}</style>
+      <div className="rd-grain" aria-hidden="true" />
+
+      {/* Nav */}
+      <nav style={{ borderBottom: "1px solid rgba(245,237,214,.08)", padding: "0 20px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "center", gap: 16, height: 60 }}>
+          <button className="rd-btn rd-btn-ghost" onClick={() => navigate("/admin/dashboard")}>← Back</button>
+          <div style={{ width: 1, height: 20, background: "rgba(245,237,214,.12)" }} />
           <div>
-            <h1 className="text-lg font-bold text-foreground leading-tight">
+            <p style={{ fontFamily: "'Bebas Neue',Impact,sans-serif", fontSize: 20, color: "#F5EDD6", letterSpacing: ".06em", margin: 0, lineHeight: 1 }}>
               {registration.firstName} {registration.lastName}
-            </h1>
-            <p className="text-xs text-muted-foreground">Registration Details</p>
+            </p>
+            <p style={{ fontFamily: "'Courier New',monospace", fontSize: 8, color: "rgba(245,237,214,.3)", letterSpacing: "2px", textTransform: "uppercase", margin: 0 }}>
+              Registration Details
+            </p>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: detail sections */}
-          <div className="lg:col-span-2 space-y-4">
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 20px 60px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 20 }}>
 
-            {/* Personal */}
-            <div style={SECTION_CARD}>
-              <div className="flex items-center gap-2 mb-4">
-                <User style={{ width: 16, height: 16, color: RED }} />
-                <h2 className="font-semibold text-foreground">Personal Information</h2>
+          {/* Main layout */}
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0,2fr) minmax(0,1fr)", gap: 20, alignItems: "start" }}
+            className="rd-appear">
+
+            {/* LEFT: detail sections */}
+            <div>
+
+              {/* Personal */}
+              <div className="rd-card rd-card-red">
+                <p className="rd-section-title">// Personal Information</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
+                  {[
+                    { l: "Full Name", v: `${registration.firstName} ${registration.lastName}` },
+                    { l: "Age", v: `${calculateAge(registration.dateOfBirth)} years old` },
+                    { l: "Email", v: registration.email },
+                    { l: "Phone", v: registration.phone },
+                    { l: "Date of Birth", v: new Date(registration.dateOfBirth).toLocaleDateString() },
+                    { l: "Gender", v: registration.gender },
+                    { l: "Corps", v: registration.corpsName },
+                    { l: "Age Category", v: registration.isUnder18 ? "Under 18" : "Adult (18+)" },
+                  ].map(({ l, v }) => (
+                    <div key={l}>
+                      <span className="rd-label">{l}</span>
+                      <span className="rd-value">{v}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div><span style={LABEL_STYLE}>Name</span><p className="text-muted-foreground">{registration.firstName} {registration.lastName}</p></div>
-                <div>
-                  <span style={LABEL_STYLE}>Age</span>
-                  <p className="text-muted-foreground flex items-center gap-2">
-                    {calculateAge(registration.dateOfBirth)} years old
-                    <Badge style={registration.isUnder18
-                      ? { background: "#fff0f0", color: RED, border: `1px solid ${RED}`, fontSize: "0.6rem" }
-                      : { background: "#f5f5f5", color: "#555", fontSize: "0.6rem" }
-                    }>
+
+              {/* Guardian */}
+              {registration.isUnder18 && registration.guardianFirstName && (
+                <div className="rd-card rd-card-gold">
+                  <p className="rd-section-title">// Guardian Information</p>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
+                    {[
+                      { l: "Guardian Name", v: `${registration.guardianFirstName} ${registration.guardianLastName}` },
+                      { l: "Relationship", v: registration.guardianRelationship || "—" },
+                      { l: "Guardian Email", v: registration.guardianEmail || "—" },
+                      { l: "Guardian Phone", v: registration.guardianPhone || "—" },
+                    ].map(({ l, v }) => (
+                      <div key={l}>
+                        <span className="rd-label">{l}</span>
+                        <span className="rd-value">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Emergency */}
+              <div className="rd-card">
+                <p className="rd-section-title">// Emergency Contact</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(180px,1fr))", gap: 18 }}>
+                  {[
+                    { l: "Name", v: registration.emergencyName },
+                    { l: "Phone", v: registration.emergencyPhone },
+                    { l: "Relationship", v: registration.emergencyRelationship },
+                  ].map(({ l, v }) => (
+                    <div key={l}>
+                      <span className="rd-label">{l}</span>
+                      <span className="rd-value">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Medical */}
+              <div className="rd-card">
+                <p className="rd-section-title">// Medical Information</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {[
+                    { l: "Medical Conditions", v: registration.medicalConditions || "None specified" },
+                    { l: "Current Medications", v: registration.medications || "None specified" },
+                    { l: "Allergies", v: registration.allergies || "None specified" },
+                  ].map(({ l, v }) => (
+                    <div key={l}>
+                      <span className="rd-label">{l}</span>
+                      <span className="rd-value">{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Consent */}
+              <div className="rd-card">
+                <p className="rd-section-title">// Consent & Permissions</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div>
+                    <span className="rd-label">Photo / Video Consent</span>
+                    <span className="rd-value">
+                      {registration.photoVideoConsent === "yes" ? "Yes — consents to photos/videos" : "No — does not consent"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="rd-label">Terms & Camp Rules</span>
+                    <span className="rd-value">
+                      {registration.agreedToTerms ? "Agreed" : "Not agreed"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT: summary + actions */}
+            <div>
+
+              {/* Summary */}
+              <div className="rd-card rd-card-red" style={{ marginBottom: 16 }}>
+                <p className="rd-section-title">// Registration Summary</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div>
+                    <span className="rd-label">Reference ID</span>
+                    <span style={{ fontFamily: "'Courier New',monospace", fontSize: 13, color: "#C8001A", letterSpacing: "1px" }}>
+                      YC2026-{registration.id}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="rd-label">Registered</span>
+                    <span className="rd-value">{new Date(registration.registeredAt).toLocaleDateString()}</span>
+                  </div>
+                  <div>
+                    <span className="rd-label">Age Category</span>
+                    <span style={{
+                      fontFamily: "'Courier New',monospace", fontSize: 9, letterSpacing: "2px", textTransform: "uppercase",
+                      padding: "3px 10px",
+                      display: "inline-block",
+                      background: registration.isUnder18 ? "rgba(200,0,26,.18)" : "rgba(245,237,214,.07)",
+                      color: registration.isUnder18 ? "#C8001A" : "rgba(245,237,214,.5)",
+                      border: registration.isUnder18 ? "1px solid rgba(200,0,26,.3)" : "1px solid rgba(245,237,214,.12)",
+                    }}>
                       {registration.isUnder18 ? "Under 18" : "Adult"}
-                    </Badge>
-                  </p>
+                    </span>
+                  </div>
                 </div>
-                <div><span style={LABEL_STYLE}>Email</span><p className="text-muted-foreground">{registration.email}</p></div>
-                <div><span style={LABEL_STYLE}>Phone</span><p className="text-muted-foreground">{registration.phone}</p></div>
-                <div><span style={LABEL_STYLE}>Date of Birth</span><p className="text-muted-foreground">{new Date(registration.dateOfBirth).toLocaleDateString()}</p></div>
-                <div><span style={LABEL_STYLE}>Gender</span><p className="text-muted-foreground capitalize">{registration.gender}</p></div>
-                <div className="md:col-span-2"><span style={LABEL_STYLE}>Corps</span><p className="text-muted-foreground">{registration.corpsName}</p></div>
               </div>
-            </div>
 
-            {/* Guardian */}
-            {registration.isUnder18 && registration.guardianFirstName && (
-              <div style={SECTION_CARD}>
-                <div className="flex items-center gap-2 mb-4">
-                  <Shield style={{ width: 16, height: 16, color: RED }} />
-                  <h2 className="font-semibold text-foreground">Guardian Information</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div><span style={LABEL_STYLE}>Guardian Name</span><p className="text-muted-foreground">{registration.guardianFirstName} {registration.guardianLastName}</p></div>
-                  <div><span style={LABEL_STYLE}>Relationship</span><p className="text-muted-foreground capitalize">{registration.guardianRelationship}</p></div>
-                  <div><span style={LABEL_STYLE}>Guardian Email</span><p className="text-muted-foreground">{registration.guardianEmail}</p></div>
-                  <div><span style={LABEL_STYLE}>Guardian Phone</span><p className="text-muted-foreground">{registration.guardianPhone}</p></div>
-                </div>
-              </div>
-            )}
-
-            {/* Emergency */}
-            <div style={SECTION_CARD}>
-              <div className="flex items-center gap-2 mb-4">
-                <Phone style={{ width: 16, height: 16, color: RED }} />
-                <h2 className="font-semibold text-foreground">Emergency Contact</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div><span style={LABEL_STYLE}>Name</span><p className="text-muted-foreground">{registration.emergencyName}</p></div>
-                <div><span style={LABEL_STYLE}>Phone</span><p className="text-muted-foreground">{registration.emergencyPhone}</p></div>
-                <div><span style={LABEL_STYLE}>Relationship</span><p className="text-muted-foreground">{registration.emergencyRelationship}</p></div>
-              </div>
-            </div>
-
-            {/* Medical */}
-            <div style={SECTION_CARD}>
-              <div className="flex items-center gap-2 mb-4">
-                <Heart style={{ width: 16, height: 16, color: RED }} />
-                <h2 className="font-semibold text-foreground">Medical Information</h2>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div><span style={LABEL_STYLE}>Medical Conditions</span><p className="text-muted-foreground">{registration.medicalConditions || "None specified"}</p></div>
-                <div><span style={LABEL_STYLE}>Current Medications</span><p className="text-muted-foreground">{registration.medications || "None specified"}</p></div>
-                <div><span style={LABEL_STYLE}>Allergies</span><p className="text-muted-foreground">{registration.allergies || "None specified"}</p></div>
-              </div>
-            </div>
-
-            {/* Consent */}
-            <div style={SECTION_CARD}>
-              <div className="flex items-center gap-2 mb-4">
-                <Camera style={{ width: 16, height: 16, color: RED }} />
-                <h2 className="font-semibold text-foreground">Consent & Permissions</h2>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span style={LABEL_STYLE}>Photo/Video Consent</span>
-                  <p className="text-muted-foreground">
-                    {registration.photoVideoConsent === "yes" ? "Yes — consents to photos/videos" : "No — does not consent to photos/videos"}
-                  </p>
-                </div>
-                <div>
-                  <span style={LABEL_STYLE}>Terms Agreement</span>
-                  <p className="text-muted-foreground">
-                    {registration.agreedToTerms ? "Agreed to terms and camp rules" : "Not agreed"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: summary + actions */}
-          <div className="space-y-4">
-            <div style={SECTION_CARD}>
-              <div className="flex items-center gap-2 mb-4">
-                <FileText style={{ width: 16, height: 16, color: RED }} />
-                <h2 className="font-semibold text-foreground">Registration Summary</h2>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Reference</span>
-                  <span className="font-mono text-xs font-bold" style={{ color: RED }}>YC2026-{registration.id}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Registered</span>
-                  <span className="text-xs">{new Date(registration.registeredAt).toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Age Category</span>
-                  <Badge style={registration.isUnder18
-                    ? { background: "#fff0f0", color: RED, border: `1px solid ${RED}`, fontSize: "0.6rem" }
-                    : { background: "#f5f5f5", color: "#555", fontSize: "0.6rem" }
-                  }>
-                    {registration.isUnder18 ? "Under 18" : "Adult"}
-                  </Badge>
+              {/* Quick actions */}
+              <div className="rd-card">
+                <p className="rd-section-title">// Quick Actions</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <a href={`mailto:${registration.email}`} style={{ textDecoration: "none" }}>
+                    <button className="rd-btn rd-btn-action">✉ Send Email</button>
+                  </a>
+                  <a href={`tel:${registration.phone}`} style={{ textDecoration: "none" }}>
+                    <button className="rd-btn rd-btn-action">✆ Call Youth</button>
+                  </a>
                 </div>
               </div>
             </div>
 
-            <div style={SECTION_CARD}>
-              <h3 className="font-semibold text-foreground text-sm mb-3">Quick Actions</h3>
-              <div className="space-y-2">
-                <a href={`mailto:${registration.email}`} className="w-full">
-                  <Button variant="outline" className="w-full justify-start text-sm">
-                    <Mail className="w-4 h-4 mr-2" /> Send Email
-                  </Button>
-                </a>
-                <a href={`tel:${registration.phone}`} className="w-full">
-                  <Button variant="outline" className="w-full justify-start text-sm">
-                    <Phone className="w-4 h-4 mr-2" /> Call Youth
-                  </Button>
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
-      <div style={{ background: RED, height: "6px" }} />
+      {/* Footer */}
+      <div style={{ borderTop: "1px solid rgba(245,237,214,.06)", padding: "16px 20px", textAlign: "center" }}>
+        <p style={{ fontFamily: "'Courier New',monospace", fontSize: 9, color: "rgba(245,237,214,.15)", letterSpacing: ".1em", textTransform: "uppercase", margin: 0 }}>
+          Y-CON 2026 · Central Division · Admin Portal
+        </p>
+      </div>
     </div>
   );
 };
